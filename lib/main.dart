@@ -95,9 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () => {/* TODO */},
-                      //margin: EdgeInsets.symmetric(horizontal: 8),
                       child: Column(
-                        //crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             color: Colors.grey[400],
@@ -110,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           Container(
                             padding: EdgeInsets.all(8),
-                            //alignment: Alignment.topLeft,
                             child: Column(
                               children: <Widget>[
                                 Align(
@@ -142,9 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () => {/* TODO */},
-                      //margin: EdgeInsets.symmetric(horizontal: 8),
                       child: Column(
-                        //crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
                             color: Colors.grey[400],
@@ -157,7 +152,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           Container(
                             padding: EdgeInsets.all(8),
-                            //alignment: Alignment.topLeft,
                             child: Column(
                               children: <Widget>[
                                 Align(
@@ -336,11 +330,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _incrementCounter,
+      //   tooltip: 'Increment',
+      //   child: Icon(Icons.add),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
