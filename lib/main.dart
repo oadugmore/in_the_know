@@ -71,24 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body:
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          Column(
-        // Column is also a layout widget. It takes a list of children and
-        // arranges them vertically. By default, it sizes itself to fit its
-        // children horizontally, and tries to be as tall as its parent.
-        //
-        // Invoke "debug painting" (press "p" in the console, choose the
-        // "Toggle Debug Paint" action from the Flutter Inspector in Android
-        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-        // to see the wireframe for each widget.
-        //
-        // Column has various properties to control how it sizes itself and
-        // how it positions its children. Here we use mainAxisAlignment to
-        // center the children vertically; the main axis here is the vertical
-        // axis because Columns are vertical (the cross axis would be
-        // horizontal).
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
@@ -99,58 +82,257 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Container(
-            color: Colors.grey[300],
+            color: Colors.grey[200],
             height: 200,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
               children: <Widget>[
-                Material(
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  width: 200,
+                  child: Material(
                     color: Colors.white,
                     child: InkWell(
-                      onTap: () => print("tapped"),
-                      child: Container(
-                        width: 200,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              color: Colors.grey,
-                              child: Icon(
-                                Icons.image,
-                                size: 100,
-                              ),
-                              height: 100,
-                              width: 200,
+                      onTap: () => {/* TODO */},
+                      //margin: EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        //crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            color: Colors.grey[400],
+                            child: Icon(
+                              Icons.image,
+                              size: 100,
                             ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'KTLA',
-                              ),
+                            height: 100,
+                            width: 200,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            //alignment: Alignment.topLeft,
+                            child: Column(
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'KTLA',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'Chase in LA',
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              'Chase in LA',
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    )),
+                    ),
+                  ),
+                ),
                 Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
                   width: 200,
-                  color: Colors.amber[500],
-                  child: const Center(child: Text('Entry B')),
+                  child: Material(
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () => {/* TODO */},
+                      //margin: EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        //crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            color: Colors.grey[400],
+                            child: Icon(
+                              Icons.image,
+                              size: 100,
+                            ),
+                            height: 100,
+                            width: 200,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            //alignment: Alignment.topLeft,
+                            child: Column(
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'ABC7',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    'Unfolding chaos in the downtown area',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-          Text('Twitter', style: Theme.of(context).textTheme.headline6),
-          Text(
-            'You have pushed the button this many times:',
+          Container(
+            margin: EdgeInsets.only(top: 20, bottom: 20, left: 8),
+            child: Text(
+              'Twitter',
+              style: Theme.of(context).textTheme.headline6,
+            ),
           ),
-          Text(
-            '$_counter',
-            style: Theme.of(context).textTheme.headline4,
+          Container(
+            color: Colors.grey[200],
+            height: 200,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  width: 200,
+                  child: Material(
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () => {/* TODO */},
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            color: Colors.grey[400],
+                            child: Icon(
+                              Icons.person,
+                              size: 100,
+                            ),
+                            height: 100,
+                            width: 200,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            child: Column(
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    '@LAPD',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    '"Avoid this intersection for now."',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  width: 200,
+                  child: Material(
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () => {/* TODO */},
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            color: Colors.grey[400],
+                            child: Icon(
+                              Icons.person,
+                              size: 100,
+                            ),
+                            height: 100,
+                            width: 200,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            child: Column(
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    '@twitteruser335',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    '"I saw it! They\'re headed towards Main Street!"',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  width: 200,
+                  child: Material(
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () => {/* TODO */},
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            color: Colors.grey[400],
+                            child: Icon(
+                              Icons.person,
+                              size: 100,
+                            ),
+                            height: 100,
+                            width: 200,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            child: Column(
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    '@unituint',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    '"What\'s all that noise?"',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
