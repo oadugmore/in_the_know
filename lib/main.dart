@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -45,6 +46,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+
+  Future<http.Response> fetchAlbum() async {
+  final response = await http.get('http://newsapi.org/v2/sources?language=en&country=us&apiKey=API_KEY');
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response, then parse the JSON.
+    return json.decode(response.body);
+  } else {
+    // If the server did not return a 200 OK response, then throw an exception.
+    throw Exception('Failed to load album');
+  }
+}
+
 
   void _incrementCounter() {
     setState(() {
