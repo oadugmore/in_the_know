@@ -49,6 +49,26 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  void testTwitterApi() async {
+    final key = "API_KEY";
+    final secret = "API_SECRET";
+    final keyURLEncoded = Uri.encodeComponent(key);
+    final secretURLEncoded = Uri.encodeComponent(secret);
+    final keySecret = keyURLEncoded + ":" + secretURLEncoded;
+    final keySecretBase64Encoded = base64.encode(keySecret.codeUnits);
+
+    final http.Response response = await http.post(
+      "https://api.twitter.com/oauth2/token",
+      headers: <String, String>{
+        'Authorization': 'Basic $keySecretBase64Encoded',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: 'grant_type=client_credentials',
+    );
+
+    print(jsonDecode(response.body));
+  }
+
   void testNewsApi() async {
     final response = await http.get(
         'http://newsapi.org/v2/sources?language=en&country=us&apiKey=API_KEY');
@@ -347,7 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: testNewsApi,
+        onPressed: testTwitterApi,
         child: Icon(Icons.new_releases),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
