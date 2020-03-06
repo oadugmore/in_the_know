@@ -1,16 +1,12 @@
-# in_the_know
+# In The Know
 
-A new Flutter project.
+A project by Owen Dugmore  
+CS 4990 - Mobile App Development  
+Cal Poly Pomona  
+Spring 2020
 
-## Getting Started
+## This page is under construction
 
-This project is a starting point for a Flutter application.
+Stay in the know about the situations around you, using the power of Twitter and local news.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Check out the project on [GitHub](https://github.com/oadugmore/in_the_know)
