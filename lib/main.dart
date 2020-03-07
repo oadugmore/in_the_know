@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+//import 'package:cloud_functions/cloud_functions.dart' as functions;
 
 void main() => runApp(MyApp());
 
@@ -52,18 +53,17 @@ class _MyHomePageState extends State<MyHomePage> {
   void testTwitterApi() async {
     final key = "API_KEY";
     final secret = "API_SECRET";
+    final accessToken = "TOKEN";
     final keyURLEncoded = Uri.encodeComponent(key);
     final secretURLEncoded = Uri.encodeComponent(secret);
     final keySecret = keyURLEncoded + ":" + secretURLEncoded;
     final keySecretBase64Encoded = base64.encode(keySecret.codeUnits);
 
-    final http.Response response = await http.post(
-      "https://api.twitter.com/oauth2/token",
+    final http.Response response = await http.get(
+      "https://api.twitter.com/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi",
       headers: <String, String>{
-        'Authorization': 'Basic $keySecretBase64Encoded',
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Authorization': 'Basic $accessToken',
       },
-      body: 'grant_type=client_credentials',
     );
 
     print(jsonDecode(response.body));

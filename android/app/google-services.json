@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "608976071035",
+    "firebase_url": "https://in-the-know-82723.firebaseio.com",
+    "project_id": "in-the-know-82723",
+    "storage_bucket": "in-the-know-82723.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608976071035:android:cea0b8dc469215f0d0b5de",
+        "android_client_info": {
+          "package_name": "com.oadugmore.intheknow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608976071035-tmlrsc7g3ehh6j31ddr206jm6e93q6i0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaoTYl7LbiHakvD3HfFb4Sddjfetjio1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608976071035-tmlrsc7g3ehh6j31ddr206jm6e93q6i0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
