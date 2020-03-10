@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-//import 'package:cloud_functions/cloud_functions.dart' as functions;
+import 'package:cloud_functions/cloud_functions.dart';
 
 void main() => runApp(MyApp());
 
@@ -58,6 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
     final secretURLEncoded = Uri.encodeComponent(secret);
     final keySecret = keyURLEncoded + ":" + secretURLEncoded;
     final keySecretBase64Encoded = base64.encode(keySecret.codeUnits);
+
+    //function = functions.CloudFunctions.instance;
+
+    HttpsCallable twitterFunction = CloudFunctions.instance.getHttpsCallable(functionName: "twitterTest");
 
     final http.Response response = await http.get(
       "https://api.twitter.com/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi",
