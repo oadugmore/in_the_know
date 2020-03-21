@@ -2,6 +2,7 @@ import spacy
 import os
 from twitter import *
 from dotenv import load_dotenv
+import json
 load_dotenv()
 
 model_dir = './models'
@@ -34,7 +35,7 @@ def hello(request):
     #sentence = "Please avoid the area of 4000 Boston Ave. due to police activity. The media staging location is at 40th and Z Street. Check back for further updates."
 
     #searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
-    searchRequest = { # Sample search request
+    searchRequest = {  # Sample search request
         "statuses": [
             {
                 "text": "San Diego police respond to shots fired in Hillcrest. Avoid the area due to police activity.",
@@ -56,10 +57,11 @@ def hello(request):
 
         {"label": "SITUATION", "pattern": [{"LOWER": {"REGEX": "^police"}}, {
             "LOWER": {"REGEX": "^(activity|activities)"}}], "id": "Police Activity"},
-        #{"label": "SITUATION", "pattern": [{"LOWER": {"REGEX": "^(gun)?shots?"}}, {
+        # {"label": "SITUATION", "pattern": [{"LOWER": {"REGEX": "^(gun)?shots?"}}, {
         #    "LOWER": {"REGEX": "^(gun)?fire[sd]?"}}], "id": "Police Activity"},
         {"label": "SITUATION", "pattern": [{"LOWER": {"REGEX": "^officers?"}}, {
             "LOWER": {"REGEX": "^down"}}], "id": "Police Activity"},
+
     ]
     ruler.add_patterns(patterns)
     nlp.add_pipe(ruler)
@@ -82,7 +84,7 @@ def hello(request):
         for ent in doc.ents:
             #print(ent.text, ent.start_char, ent.end_char, ent.label_)
             if ent.label_ == "SITUATION":
-                result += "SITUATION: " + ent.text # + ": " + ent.ent_id_
+                result += "SITUATION: " + ent.text  # + ": " + ent.ent_id_
                 # string +=
                 result += ", "
                 score += 1
@@ -92,7 +94,7 @@ def hello(request):
     result += "Score for this location: " + str(score) + ". "
     if score >= 5:
         result += "This result WILL be included in In The Know results."
-    return result
+    return json.dumps({"rawData": result})
 
 # This function will NOT work on the server because files become read-only.
 # This is only if I need to make significant modifications to the base model.
