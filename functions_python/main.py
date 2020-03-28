@@ -32,9 +32,10 @@ def hello(request):
         placeName = "Elko"
 
     searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
-    searchText = "sampletext"
-    with open('search.txt', 'r') as searchFile:
-        searchText = searchFile.read()
+    
+    # searchText = "sampletext"
+    # with open('search.txt', 'r') as searchFile:
+    #     searchText = searchFile.read()
 
     # searchRequest = {  # Sample search request
     #     "statuses": [
