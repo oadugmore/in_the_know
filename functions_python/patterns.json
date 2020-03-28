@@ -1,0 +1,43 @@
+{
+    "patterns": [{
+            "label": "SITUATION",
+            "id": "Gunfire",
+            "pattern": [
+                { "LEMMA": {"IN": ["gunshot", "gunfire", "shooting"] }}
+            ]
+        },
+        {
+            "label": "SITUATION",
+            "id": "Gunfire",
+            "pattern": [
+                { "LEMMA": {"IN": ["shot", "gunshot"] }},
+                { "LEMMA": {"IN": ["fire", "gunfire"]}}
+            ]
+        },
+        
+        {
+            "label": "SITUATION",
+            "id": "Police Activity",
+            "pattern": [
+                { "LEMMA": "police" },
+                { "LEMMA": "activity" }
+            ]
+        },
+        {
+            "label": "SITUATION",
+            "id": "Police Activity",
+            "pattern": [
+                { "LEMMA": { "IN": ["officer", "trooper"] } },
+                { "LEMMA": { "IN": ["down", "shoot", "kill"] } }
+            ]
+        },
+        {
+            "label": "SITUATION",
+            "id": "Police Activity",
+            "pattern": [
+                { "LEMMA": { "IN": ["have", "be"] } },
+                { "LEMMA": { "IN": ["down", "shoot", "kill"] } }
+            ]
+        }
+    ]
+}

@@ -31,50 +31,25 @@ def hello(request):
     else:
         placeName = "Elko"
 
-    #sentence = "Breaking: police activity reported at 11:02 AM in San Diego, the area between Grand Avenue and the CA-163 has been blocked off by SDPD."
-    #sentence = "San Diego police respond to shots fired in Hillcrest. Avoid the area due to police activity"
-    #sentence = "Please avoid the area of 4000 Boston Ave. due to police activity. The media staging location is at 40th and Z Street. Check back for further updates."
-
     #searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
+    searchText = "sampletext"
+    with open('search.txt', 'r') as searchFile:
+        searchText = searchFile.read()
+
     searchRequest = {  # Sample search request
         "statuses": [
             {
-                "text": "2 civilians were shot earlier.",
+                "text": searchText,
                 "user": {"verified": False}
             }
         ]
     }
 
     # Add "situation" patterns
-    patterns = [
-        {"label": "SITUATION", "id": "Gunfire", "pattern": [
-            {"LOWER": {"REGEX": "^(gun)?shots?"}},
-            {"LOWER": {"REGEX": "^(gun)?fire[sd]?"}},
-        ]},
-        {"label": "SITUATION", "id": "Gunfire", "pattern": [
-            {"LOWER": {"REGEX": "^gunshots?"}},
-        ]},
-        {"label": "SITUATION", "id": "Gunfire", "pattern": [
-            {"LOWER": {"REGEX": "^gunfire[sd]?"}},
-        ]},
-        {"label": "SITUATION", "id": "Gunfire", "pattern": [
-            {"LOWER": {"REGEX": "^shootings?"}},
-        ]},
-
-        {"label": "SITUATION", "id": "Police Activity", "pattern": [
-            {"LEMMA": "police"},
-            {"LEMMA": "activity"},
-        ]},
-        {"label": "SITUATION", "id": "Police Activity", "pattern": [
-            {"LEMMA": {"IN": ["officer", "trooper"]}},
-            {"LEMMA": {"IN": ["down", "shoot", "kill"]}},
-        ]},
-        {"label": "SITUATION", "id": "Police Activity", "pattern": [
-            {"LEMMA": {"IN": ["have", "be"]}},
-            {"LEMMA": {"IN": ["down", "shoot", "kill"]}},
-        ]},
-
-    ]
+    patterns = {}
+    with open('patterns.json', 'r') as patternfile:
+        patterns = json.load(patternfile)['patterns']
+    
     ruler.add_patterns(patterns)
     nlp.add_pipe(ruler)
     # if not os.path.isdir(model_dir):

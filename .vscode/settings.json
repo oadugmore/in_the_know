@@ -1,3 +1,11 @@
 {
-    "python.pythonPath": "C:\\Users\\oadug\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
+    "python.pythonPath": "C:\\Users\\oadug\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    
+    "beautify.language": {
+        "js": {
+            "type": [
+                "json",
+            ]
+        }
+    }
 }
