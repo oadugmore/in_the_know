@@ -14,8 +14,8 @@ def hello(request):
     nlp = spacy.load('en_core_web_sm')
     ruler = spacy.pipeline.EntityRuler(nlp)
 
-    # twitter = Twitter(auth=OAuth2(
-    #     bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
+    twitter = Twitter(auth=OAuth2(
+        bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
 
     lat = 40.8324
     long = -115.7631  # Elko
@@ -31,19 +31,19 @@ def hello(request):
     else:
         placeName = "Elko"
 
-    #searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
+    searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
     searchText = "sampletext"
     with open('search.txt', 'r') as searchFile:
         searchText = searchFile.read()
 
-    searchRequest = {  # Sample search request
-        "statuses": [
-            {
-                "text": searchText,
-                "user": {"verified": False}
-            }
-        ]
-    }
+    # searchRequest = {  # Sample search request
+    #     "statuses": [
+    #         {
+    #             "text": searchText,
+    #             "user": {"verified": False}
+    #         }
+    #     ]
+    # }
 
     # Add "situation" patterns
     patterns = {}
@@ -89,7 +89,7 @@ def explain(request):
     nlp = spacy.load('en_core_web_sm')
     #ruler = spacy.pipeline.EntityRuler(nlp)
 
-    sentence = "A Nevada Highway Patrol trooper has been shot and killed during a confrontation early Friday morning near Ely."
+    sentence = "RT @MichelleWilli7: Subject is in custody. Elko County SWAT has custody of suspect. There are explosives in the vehicle. We are gonna nee"
 
     result = ''
     doc = nlp(sentence)

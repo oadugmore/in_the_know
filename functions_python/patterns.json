@@ -3,40 +3,55 @@
             "label": "SITUATION",
             "id": "Gunfire",
             "pattern": [
-                { "LEMMA": {"IN": ["gunshot", "gunfire", "shooting"] }}
+                { "LEMMA": { "IN": ["gunshot", "gunfire", "shooting", "shooter"] } }
             ]
         },
         {
             "label": "SITUATION",
             "id": "Gunfire",
             "pattern": [
-                { "LEMMA": {"IN": ["shot", "gunshot"] }},
-                { "LEMMA": {"IN": ["fire", "gunfire"]}}
+                { "LEMMA": { "IN": ["shot", "gunshot"] } },
+                { "POS": { "IN": ["VERB", "AUX"] }, "OP": "*" },
+                { "LEMMA": { "IN": ["fire", "gunfire"] } }
             ]
         },
-        
+
+        {
+            "label": "SITUATION",
+            "id": "Police Activity",
+            "pattern": [
+                { "LEMMA": { "IN": ["manhunt", "Manhunt"] } }
+            ]
+        },
+        {
+            "label": "SITUATION",
+            "id": "Police Activity",
+            "pattern": [
+                { "ORTH": { "REGEX": "SWAT" } }
+            ]
+        },
         {
             "label": "SITUATION",
             "id": "Police Activity",
             "pattern": [
                 { "LEMMA": "police" },
-                { "LEMMA": "activity" }
+                { "LEMMA": { "IN": ["activity", "chase"] } }
             ]
         },
         {
             "label": "SITUATION",
             "id": "Police Activity",
             "pattern": [
-                { "LEMMA": { "IN": ["officer", "trooper"] } },
-                { "LEMMA": { "IN": ["down", "shoot", "kill"] } }
+                { "LEMMA": { "IN": ["have", "be", "officer", "trooper", "Trooper", "police", "suspect"] } },
+                { "LEMMA": { "IN": ["shoot", "kill"] }, "POS": "VERB" }
             ]
         },
         {
             "label": "SITUATION",
             "id": "Police Activity",
             "pattern": [
-                { "LEMMA": { "IN": ["have", "be"] } },
-                { "LEMMA": { "IN": ["down", "shoot", "kill"] } }
+                { "LEMMA": { "IN": ["officer", "trooper", "Trooper", "police", "suspect"] } },
+                { "LEMMA": "down" }
             ]
         }
     ]
