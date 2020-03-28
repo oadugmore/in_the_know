@@ -31,7 +31,7 @@ class SituationListState extends State<SituationList> {
   var _situations = new List<Situation>();
 
   _getNerData(String query) async {
-    if (query.trim().isEmpty) return;
+    if (query.trim().isEmpty) return null;
     // local testing URL
     dynamic result;
     String safeQuery = Uri.encodeComponent(query);
@@ -43,7 +43,8 @@ class SituationListState extends State<SituationList> {
         //dynamic responseData = response.body;
         //result = responseData['rawData'];
         //result = Situation.allFromJson(jsonDecode(response.body));
-        result = Situation.allFromJson(jsonDecode("{\"situations\": [{\"type\": \"type1\", \"location\": \"loc1\"}, {\"type\": \"type2\", \"location\": \"loc2\"}, {\"type\": \"type3\", \"location\": \"loc3\"}] }"));
+        result = Situation.allFromJson(jsonDecode(
+            "{\"situations\": [{\"type\": \"type1\", \"location\": \"loc1\"}, {\"type\": \"type2\", \"location\": \"loc2\"}, {\"type\": \"type3\", \"location\": \"loc3\"}] }"));
         for (var sit in result) {
           print(sit.type + ", " + sit.location);
         }
@@ -91,9 +92,8 @@ class SituationListState extends State<SituationList> {
                 padding: const EdgeInsets.all(8.0),
                 itemCount: _situations.length,
                 itemBuilder: (context, index) {
-                  return Text(_situations[index].type +
-                      ' in ' +
-                      _situations[index].location);
+                  return Text(
+                      '${_situations[index].type} in ${_situations[index].location}');
                 }),
           ),
         ]),

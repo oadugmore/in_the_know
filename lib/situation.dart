@@ -2,25 +2,34 @@ import 'dart:convert';
 
 class Situation {
   final String type;
-  final String location;
+  final List<LocationEntry> locations;
 
-  Situation({this.type, this.location});
+  Situation({this.type, this.locations});
 
   factory Situation.fromJson(Map<String, dynamic> json) {
+    var locs = List<LocationEntry>();
+    for (var loc in json['locations']) {
+      locs.add(LocationEntry(name: loc['name'], frequency: loc['frequency']));
+    }
     return Situation(
       type: json['type'],
-      location: json['location'],
+      locations: locs,
     );
   }
 
   static List<Situation> allFromJson(Map<String, dynamic> jsonBody) {
-    var situations = new List<Situation>();
+    var situations = List<Situation>();
     for (var situation in jsonBody['situations']) {
       situations.add(Situation.fromJson(situation));
     }
-    //final parsed = json.decode(jsonBody).cast<Map<String, dynamic>>();
-    //return parsed.map<Situation>((json) => Situation.fromJson(json)).toList();
     return situations;
   }
 
+}
+
+class LocationEntry {
+  final String name;
+  final double frequency;
+
+  LocationEntry({this.name, this.frequency});
 }
