@@ -33,7 +33,7 @@ class SituationListState extends State<SituationList> {
   _getNerData(String query) async {
     if (query.trim().isEmpty) return null;
     // local testing URL
-    dynamic result;
+    var result;
     String safeQuery = Uri.encodeComponent(query);
     var url = 'http://10.0.2.2:8080?loc=' + safeQuery;
 
@@ -44,9 +44,9 @@ class SituationListState extends State<SituationList> {
         //result = responseData['rawData'];
         //result = Situation.allFromJson(jsonDecode(response.body));
         result = Situation.allFromJson(jsonDecode(
-            "{\"situations\": [{\"type\": \"type1\", \"location\": \"loc1\"}, {\"type\": \"type2\", \"location\": \"loc2\"}, {\"type\": \"type3\", \"location\": \"loc3\"}] }"));
+            '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
         for (var sit in result) {
-          print(sit.type + ", " + sit.location);
+          print(sit.type + ", " + sit.locations);
         }
       } else {
         print('status code: ' + response.statusCode.toString());
@@ -85,15 +85,27 @@ class SituationListState extends State<SituationList> {
           ),
           RaisedButton(
             onPressed: () async => await _getNerData(_nerQuery),
-            child: Text('Get NER Data'),
+            child: Text('Refresh'),
           ),
           Expanded(
             child: ListView.builder(
                 padding: const EdgeInsets.all(8.0),
                 itemCount: _situations.length,
                 itemBuilder: (context, index) {
-                  return Text(
-                      '${_situations[index].type} in ${_situations[index].location}');
+                  return Column(
+                    children: <Widget>[
+                      Text('${_situations[index].type}'),
+                      Text('Locations mentioned:'),
+                      Column(
+                        children: [
+                          for (var location in _situations[index].locations)
+                            Text(location.name +
+                                ' ' +
+                                location.frequency.toString()),
+                        ],
+                      ),
+                    ],
+                  );
                 }),
           ),
         ]),

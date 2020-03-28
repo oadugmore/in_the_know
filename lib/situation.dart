@@ -9,7 +9,7 @@ class Situation {
   factory Situation.fromJson(Map<String, dynamic> json) {
     var locs = List<LocationEntry>();
     for (var loc in json['locations']) {
-      locs.add(LocationEntry(name: loc['name'], frequency: loc['frequency']));
+      locs.add(LocationEntry(name: loc['name'], frequency: double.parse(loc['frequency'])));
     }
     return Situation(
       type: json['type'],
