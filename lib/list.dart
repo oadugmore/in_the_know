@@ -31,7 +31,7 @@ class SituationListPageState extends State<SituationListPage> {
     try {
       var response = await http.get(url);
       if (response.statusCode == 200) {
-        result = Situation.allFromJson(jsonDecode(response.body));
+        result = Situation.allFromJson(response.body);
         // result = Situation.allFromJson(jsonDecode(
         // '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
         setState(() {
@@ -49,16 +49,8 @@ class SituationListPageState extends State<SituationListPage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
@@ -74,38 +66,42 @@ class SituationListPageState extends State<SituationListPage> {
             child: Text('Refresh'),
           ),
           Expanded(
-            child: ListView.builder(
-                padding: const EdgeInsets.all(8.0),
-                itemCount: _situations.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SituationDetailPage(
-                              currentSituation: _situations[index],
-                            ),
-                          ),
-                        );
-                      },
-                      title: Text('SITUATION: ${_situations[index].type}'),
-                      subtitle: Column(
-                        children: <Widget>[
-                          Text('Locations mentioned:'),
-                          Column(
-                            children: [
-                              for (var location in _situations[index].locations)
-                                Text(
-                                    '${location.name}, frequency: ${location.frequency.toString()}'),
+            child: (_situations.length == 0)
+                ? Text('No situations found.')
+                : ListView.builder(
+                    padding: const EdgeInsets.all(8.0),
+                    itemCount: _situations.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SituationDetailPage(
+                                  currentSituation: _situations[index],
+                                ),
+                              ),
+                            );
+                          },
+                          title: Text('SITUATION: ${_situations[index].type}'),
+                          subtitle: Column(
+                            children: <Widget>[
+                              Text('Locations mentioned:'),
+                              Column(
+                                children: [
+                                  for (var location
+                                      in _situations[index].locations)
+                                    Text(
+                                        '${location.name}, frequency: ${location.frequency.toString()}'),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ]),
 

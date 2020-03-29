@@ -18,14 +18,6 @@ def get_situations(request):
     twitter = Twitter(auth=OAuth2(
         bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
 
-    lat = 40.8324
-    long = -115.7631  # Elko
-
-    # trendsResult = (twitter.trends.closest(lat=lat, long=long))[0]
-    # placeName = trendsResult['name']
-    # print('Place name:', placeName)
-
-    # instead of using trends API since it has a smaller rate limit
     request_args = request.args
     if request_args and 'loc' in request_args:
         placeName = request_args['loc']
@@ -60,7 +52,7 @@ def get_situations(request):
     situations = dict()
     locations = dict()
     locCount = 0
-    #keyStatuses = []
+    keyStatuses = []
     for status in searchRequest['statuses']:
         sentence = status['text']
         #result += "Raw tweet text: " + sentence + " "
@@ -80,6 +72,7 @@ def get_situations(request):
 
         # if it has a situation, add all situations and geographical locations
         if detectedSituation:
+            keyStatuses.append(status)
             score += 1
             if status['user']['verified']:
                 score += 4
@@ -92,7 +85,7 @@ def get_situations(request):
                 elif ent.label_ == "GPE":
                     locCount += 1
                     ent_text_lower = str.lower(ent.text)
-                    #print("ID: " + ent.ent_id_ + ", text: " + str.lower(ent.text))
+                    print("Entity text: " + str.lower(ent.text))
                     locations[ent_text_lower] = locations.get(
                         ent_text_lower, 0) + 1
         # keyStatuses.append(status)
@@ -102,15 +95,15 @@ def get_situations(request):
         print("This result WILL be included in the returned data.")
 
         # Get the most prominent situation type.
-        print('All situations detected:')
-        print(situations)
+        #print('All situations detected:')
+        #print(situations)
         sortedSituations = sorted(
             situations.items(), key=lambda kv: kv[1], reverse=True)
         # For now, assume there is one dominant situation.
         situationName = sortedSituations[0][0]
-        print('Name of situation: ' + situationName)
-        print('All locations detected:')
-        print(locations)
+        #print('Name of situation: ' + situationName)
+        #print('All locations detected:')
+        #print(locations)
         sortedLocations = sorted(
             locations.items(), key=lambda kv: kv[1], reverse=True)
 
@@ -125,7 +118,11 @@ def get_situations(request):
         situationsList.append({'type': situationName, 'locations': locationsList})
 
         # Final JSON construction
+        # For some reason flutter crashes when I try to include statuses
+        #result = {'situations': situationsList, 'statuses': keyStatuses}
         result = {'situations': situationsList}
+    else:
+        print("This result did not meet the threshold to be included in the returned data.")
 
     return json.dumps(result)
 

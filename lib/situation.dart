@@ -21,12 +21,18 @@ class Situation {
     );
   }
 
-  static List<Situation> allFromJson(Map<String, dynamic> jsonBody) {
+  static List<Situation> allFromJson(String json) {
     var situations = List<Situation>();
-    if (jsonBody.containsKey('situations')) {
-      for (var situation in jsonBody['situations']) {
+    var parsedJson;
+    try {
+      parsedJson = jsonDecode(json);
+    if (parsedJson.containsKey('situations')) {
+      for (var situation in parsedJson['situations']) {
         situations.add(Situation.fromJson(situation));
       }
+    }
+    } catch (e) {
+      print('Result did not have correctly formatted JSON. Exception: $e');
     }
     return situations;
   }
