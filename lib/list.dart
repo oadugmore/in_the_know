@@ -45,9 +45,7 @@ class SituationListState extends State<SituationList> {
         //result = Situation.allFromJson(jsonDecode(response.body));
         result = Situation.allFromJson(jsonDecode(
             '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
-        for (var sit in result) {
-          print(sit.type + ", " + sit.locations);
-        }
+
       } else {
         print('status code: ' + response.statusCode.toString());
       }

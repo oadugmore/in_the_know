@@ -11,6 +11,9 @@ class Situation {
     for (var loc in json['locations']) {
       locs.add(LocationEntry(name: loc['name'], frequency: double.parse(loc['frequency'])));
     }
+    for (var entry in locs) {
+      print(entry.name + entry.frequency.toString());
+    }
     return Situation(
       type: json['type'],
       locations: locs,
