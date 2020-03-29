@@ -3,6 +3,7 @@ import os
 from twitter import *
 from dotenv import load_dotenv
 import json
+import pandas as pd
 load_dotenv()
 
 model_dir = './models'
@@ -32,7 +33,7 @@ def hello(request):
         placeName = "Elko"
 
     searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
-    
+
     # searchText = "sampletext"
     # with open('search.txt', 'r') as searchFile:
     #     searchText = searchFile.read()
@@ -50,7 +51,7 @@ def hello(request):
     patterns = {}
     with open('patterns.json', 'r') as patternfile:
         patterns = json.load(patternfile)['patterns']
-    
+
     ruler.add_patterns(patterns)
     nlp.add_pipe(ruler)
     # if not os.path.isdir(model_dir):
@@ -64,20 +65,29 @@ def hello(request):
 
     result = ''
     score = 0
+    situations = dict()
+    keyStatuses = []
     for status in searchRequest['statuses']:
         sentence = status['text']
         result += "Raw tweet text: " + sentence + " "
-        #detectedSituation = False
+        detectedSituation = False
         doc = nlp(sentence)
+        dataFrame = pd.DataFrame.from_dict(data=doc.ents)
+        labels = dataFrame['label_']
+
         for ent in doc.ents:
             #print(ent.text, ent.start_char, ent.end_char, ent.label_)
             if ent.label_ == "SITUATION":
+                detectedSituation = True
+                situations[ent.ent_id_] = situations.get(ent.ent_id_, 0) + 1
+
                 result += "SITUATION: " + ent.text  # + ": " + ent.ent_id_
                 # string +=
                 result += ", "
                 score += 1
                 if status['user']['verified']:
                     score += 4
+        keyStatuses.append(status)
     # print(string)
     result += "Score for this location: " + str(score) + ". "
     if score >= 5:
