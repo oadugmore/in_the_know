@@ -6,8 +6,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'situation.dart';
 
 class SituationDetailPage extends StatefulWidget {
-  SituationDetailPage({Key key, this.currentSituation})
-      : super(key: key);
+  SituationDetailPage({Key key, this.currentSituation}) : super(key: key);
 
   //final String title;
   final Situation currentSituation;
@@ -60,10 +59,12 @@ class SituationDetailPageState extends State<SituationDetailPage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text('${widget.currentSituation.type} near ${widget.currentSituation.locations[0].name}'),
-      ),
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: widget.currentSituation.locations.length > 0
+              ? Text(
+                  '${widget.currentSituation.type} near ${widget.currentSituation.locations[0].name}')
+              : Text('${widget.currentSituation.type}')),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -74,104 +75,104 @@ class SituationDetailPageState extends State<SituationDetailPage> {
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
-          Container(
-            color: Colors.grey[200],
-            height: 200,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: 200,
-                  child: Material(
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () => {/* TODO */},
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.grey[400],
-                            child: Icon(
-                              Icons.image,
-                              size: 100,
-                            ),
-                            height: 100,
-                            width: 200,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'KTLA',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Chase in LA',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: 200,
-                  child: Material(
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () => {/* TODO */},
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.grey[400],
-                            child: Icon(
-                              Icons.image,
-                              size: 100,
-                            ),
-                            height: 100,
-                            width: 200,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'ABC7',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'Unfolding chaos in the downtown area',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   color: Colors.grey[200],
+          //   height: 200,
+          //   child: ListView(
+          //     scrollDirection: Axis.horizontal,
+          //     padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          //     children: <Widget>[
+          //       Container(
+          //         margin: EdgeInsets.symmetric(horizontal: 4),
+          //         width: 200,
+          //         child: Material(
+          //           color: Colors.white,
+          //           child: InkWell(
+          //             onTap: () => {/* TODO */},
+          //             child: Column(
+          //               children: <Widget>[
+          //                 Container(
+          //                   color: Colors.grey[400],
+          //                   child: Icon(
+          //                     Icons.image,
+          //                     size: 100,
+          //                   ),
+          //                   height: 100,
+          //                   width: 200,
+          //                 ),
+          //                 Container(
+          //                   padding: EdgeInsets.all(8),
+          //                   child: Column(
+          //                     children: <Widget>[
+          //                       Align(
+          //                         alignment: Alignment.topLeft,
+          //                         child: Text(
+          //                           'KTLA',
+          //                           style:
+          //                               Theme.of(context).textTheme.bodyText1,
+          //                         ),
+          //                       ),
+          //                       Align(
+          //                         alignment: Alignment.topLeft,
+          //                         child: Text(
+          //                           'Chase in LA',
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       Container(
+          //         margin: EdgeInsets.symmetric(horizontal: 4),
+          //         width: 200,
+          //         child: Material(
+          //           color: Colors.white,
+          //           child: InkWell(
+          //             onTap: () => {/* TODO */},
+          //             child: Column(
+          //               children: <Widget>[
+          //                 Container(
+          //                   color: Colors.grey[400],
+          //                   child: Icon(
+          //                     Icons.image,
+          //                     size: 100,
+          //                   ),
+          //                   height: 100,
+          //                   width: 200,
+          //                 ),
+          //                 Container(
+          //                   padding: EdgeInsets.all(8),
+          //                   child: Column(
+          //                     children: <Widget>[
+          //                       Align(
+          //                         alignment: Alignment.topLeft,
+          //                         child: Text(
+          //                           'ABC7',
+          //                           style:
+          //                               Theme.of(context).textTheme.bodyText1,
+          //                         ),
+          //                       ),
+          //                       Align(
+          //                         alignment: Alignment.topLeft,
+          //                         child: Text(
+          //                           'Unfolding chaos in the downtown area',
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.only(top: 20, bottom: 20, left: 8),
             child: Text(
@@ -181,12 +182,13 @@ class SituationDetailPageState extends State<SituationDetailPage> {
           ),
           Container(
             color: Colors.grey[200],
-            height: 200,
-            child: ListView(
+            height: 250,
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              children: <Widget>[
-                Container(
+              itemCount: widget.currentSituation.statuses.length,
+              itemBuilder: (context, index) {
+                return Container(
                   margin: EdgeInsets.symmetric(horizontal: 4),
                   width: 200,
                   child: Material(
@@ -199,9 +201,9 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                             color: Colors.grey[400],
                             child: Icon(
                               Icons.person,
-                              size: 100,
+                              size: 80,
                             ),
-                            height: 100,
+                            height: 80,
                             width: 200,
                           ),
                           Container(
@@ -211,7 +213,7 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                                 Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    '@LAPD',
+                                    '@${widget.currentSituation.statuses[index].username}',
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
@@ -219,7 +221,7 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                                 Align(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    '"Avoid this intersection for now."',
+                                    widget.currentSituation.statuses[index].text,
                                   ),
                                 ),
                               ],
@@ -229,96 +231,8 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: 200,
-                  child: Material(
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () => {/* TODO */},
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.grey[400],
-                            child: Icon(
-                              Icons.person,
-                              size: 100,
-                            ),
-                            height: 100,
-                            width: 200,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    '@twitteruser335',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    '"I saw it! They\'re headed towards Main Street!"',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: 200,
-                  child: Material(
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () => {/* TODO */},
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.grey[400],
-                            child: Icon(
-                              Icons.person,
-                              size: 100,
-                            ),
-                            height: 100,
-                            width: 200,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    '@unituint',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    '"What\'s all that noise?"',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ],

@@ -115,12 +115,12 @@ def get_situations(request):
             locationsList.append({'name': loc[0], 'frequency': frequency})
         
         # Only using one dominant situation for now
-        situationsList.append({'type': situationName, 'locations': locationsList})
+        situationsList.append({'type': situationName, 'locations': locationsList, 'statuses': keyStatuses})
 
         # Final JSON construction
         # For some reason flutter crashes when I try to include statuses
-        #result = {'situations': situationsList, 'statuses': keyStatuses}
         result = {'situations': situationsList}
+        #result = {'situations': situationsList}
     else:
         print("This result did not meet the threshold to be included in the returned data.")
 
