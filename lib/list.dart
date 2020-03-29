@@ -31,22 +31,20 @@ class SituationListPageState extends State<SituationListPage> {
     try {
       var response = await http.get(url);
       if (response.statusCode == 200) {
-        //dynamic responseData = response.body;
-        //result = responseData['rawData'];
-        //result = Situation.allFromJson(jsonDecode(response.body));
-        result = Situation.allFromJson(jsonDecode(
-            '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
+        result = Situation.allFromJson(jsonDecode(response.body));
+        // result = Situation.allFromJson(jsonDecode(
+        // '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
+        setState(() {
+          //_nerData = result;
+          _situations = result;
+        });
       } else {
-        print('status code: ' + response.statusCode.toString());
+        print(
+            'HTTP request returned status code ${response.statusCode.toString()}.');
       }
     } catch (exception) {
-      result = 'Error: ' + exception.toString();
+      print('Error: ' + exception.toString());
     }
-
-    setState(() {
-      //_nerData = result;
-      _situations = result;
-    });
   }
 
   @override

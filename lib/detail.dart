@@ -62,7 +62,7 @@ class SituationDetailPageState extends State<SituationDetailPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.currentSituation.type),
+        title: Text('${widget.currentSituation.type} near ${widget.currentSituation.locations[0].name}'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

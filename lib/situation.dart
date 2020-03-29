@@ -9,7 +9,8 @@ class Situation {
   factory Situation.fromJson(Map<String, dynamic> json) {
     var locs = List<LocationEntry>();
     for (var loc in json['locations']) {
-      locs.add(LocationEntry(name: loc['name'], frequency: double.parse(loc['frequency'])));
+      locs.add(LocationEntry(
+          name: loc['name'], frequency: loc['frequency']));
     }
     for (var entry in locs) {
       print(entry.name + entry.frequency.toString());
@@ -22,12 +23,13 @@ class Situation {
 
   static List<Situation> allFromJson(Map<String, dynamic> jsonBody) {
     var situations = List<Situation>();
-    for (var situation in jsonBody['situations']) {
-      situations.add(Situation.fromJson(situation));
+    if (jsonBody.containsKey('situations')) {
+      for (var situation in jsonBody['situations']) {
+        situations.add(Situation.fromJson(situation));
+      }
     }
     return situations;
   }
-
 }
 
 class LocationEntry {
