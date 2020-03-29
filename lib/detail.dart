@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'situation.dart';
 
 class SituationDetailPage extends StatefulWidget {
@@ -194,7 +195,14 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                   child: Material(
                     color: Colors.white,
                     child: InkWell(
-                      onTap: () => {/* TODO */},
+                      onTap: () async {
+                        var url = 'https://twitter.com/u/status/${widget.currentSituation.statuses[index].statusId.toString()}';
+                        if (await canLaunch(url)) {
+                          await launch(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
                       child: Column(
                         children: <Widget>[
                           Container(

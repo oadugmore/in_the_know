@@ -23,10 +23,11 @@ class SituationListPageState extends State<SituationListPage> {
 
   _getNerData(String query) async {
     if (query.trim().isEmpty) return null;
-    // local testing URL
     var result;
     String safeQuery = Uri.encodeComponent(query);
-    var url = 'http://10.0.2.2:8080?loc=' + safeQuery;
+    // local testing URL
+    //var url = 'http://10.0.2.2:8080?loc=' + safeQuery;
+    var url = 'http://192.168.1.101:8080?loc=' + safeQuery;
 
     try {
       var response = await http.get(url);
