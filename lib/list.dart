@@ -4,28 +4,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:in_the_know/detail.dart';
 import 'situation.dart';
 
-class SituationList extends StatefulWidget {
-  SituationList({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+class SituationListPage extends StatefulWidget {
+  SituationListPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  createState() => SituationListState();
+  createState() => SituationListPageState();
 }
 
-class SituationListState extends State<SituationList> {
-  int _counter = 0;
+class SituationListPageState extends State<SituationListPage> {
   String _nerQuery = '';
   String _nerData = '';
   var _situations = new List<Situation>();
@@ -45,7 +36,6 @@ class SituationListState extends State<SituationList> {
         //result = Situation.allFromJson(jsonDecode(response.body));
         result = Situation.allFromJson(jsonDecode(
             '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
-
       } else {
         print('status code: ' + response.statusCode.toString());
       }
@@ -90,19 +80,32 @@ class SituationListState extends State<SituationList> {
                 padding: const EdgeInsets.all(8.0),
                 itemCount: _situations.length,
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: <Widget>[
-                      Text('${_situations[index].type}'),
-                      Text('Locations mentioned:'),
-                      Column(
-                        children: [
-                          for (var location in _situations[index].locations)
-                            Text(location.name +
-                                ' ' +
-                                location.frequency.toString()),
+                  return Card(
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SituationDetailPage(
+                              currentSituation: _situations[index],
+                            ),
+                          ),
+                        );
+                      },
+                      title: Text('SITUATION: ${_situations[index].type}'),
+                      subtitle: Column(
+                        children: <Widget>[
+                          Text('Locations mentioned:'),
+                          Column(
+                            children: [
+                              for (var location in _situations[index].locations)
+                                Text(
+                                    '${location.name}, frequency: ${location.frequency.toString()}'),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
+                    ),
                   );
                 }),
           ),

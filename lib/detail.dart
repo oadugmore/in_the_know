@@ -3,63 +3,42 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_functions/cloud_functions.dart';
+import 'situation.dart';
 
-class SituationDetail extends StatefulWidget {
-  SituationDetail({Key key, this.title}) : super(key: key);
+class SituationDetailPage extends StatefulWidget {
+  SituationDetailPage({Key key, this.currentSituation})
+      : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  //final String title;
+  final Situation currentSituation;
 
   @override
-  SituationDetailState createState() => SituationDetailState();
+  SituationDetailPageState createState() => SituationDetailPageState();
 }
 
-class SituationDetailState extends State<SituationDetail> {
-  int _counter = 0;
+class SituationDetailPageState extends State<SituationDetailPage> {
+  // void testTwitterApi() async {
+  //   final key = "API_KEY";
+  //   final secret = "API_SECRET";
+  //   final accessToken = "TOKEN";
+  //   final keyURLEncoded = Uri.encodeComponent(key);
+  //   final secretURLEncoded = Uri.encodeComponent(secret);
+  //   final keySecret = keyURLEncoded + ":" + secretURLEncoded;
+  //   final keySecretBase64Encoded = base64.encode(keySecret.codeUnits);
 
-  void testTwitterApi() async {
-    final key = "API_KEY";
-    final secret = "API_SECRET";
-    final accessToken = "TOKEN";
-    final keyURLEncoded = Uri.encodeComponent(key);
-    final secretURLEncoded = Uri.encodeComponent(secret);
-    final keySecret = keyURLEncoded + ":" + secretURLEncoded;
-    final keySecretBase64Encoded = base64.encode(keySecret.codeUnits);
+  //   //function = functions.CloudFunctions.instance;
 
-    //function = functions.CloudFunctions.instance;
+  //   HttpsCallable twitterFunction = CloudFunctions.instance.getHttpsCallable(functionName: "twitterTest");
 
-    HttpsCallable twitterFunction = CloudFunctions.instance.getHttpsCallable(functionName: "twitterTest");
+  //   final http.Response response = await http.get(
+  //     "https://api.twitter.com/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi",
+  //     headers: <String, String>{
+  //       'Authorization': 'Basic $accessToken',
+  //     },
+  //   );
 
-    final http.Response response = await http.get(
-      "https://api.twitter.com/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi",
-      headers: <String, String>{
-        'Authorization': 'Basic $accessToken',
-      },
-    );
-
-    print(jsonDecode(response.body));
-  }
-
-  void testNewsApi() async {
-    final response = await http.get(
-        'http://newsapi.org/v2/sources?language=en&country=us&apiKey=API_KEY');
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response, then parse the JSON.
-      var jsonObject = json.decode(response.body);
-      print(jsonObject['sources']);
-    } else {
-      // If the server did not return a 200 OK response, then throw an exception.
-      throw Exception('Failed to load data');
-    }
-  }
+  //   print(jsonDecode(response.body));
+  // }
 
   void _incrementCounter() {
     setState(() {
@@ -68,7 +47,6 @@ class SituationDetailState extends State<SituationDetail> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
     });
   }
 
@@ -84,7 +62,7 @@ class SituationDetailState extends State<SituationDetail> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(widget.currentSituation.type),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,10 +323,6 @@ class SituationDetailState extends State<SituationDetail> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: testTwitterApi,
-        child: Icon(Icons.new_releases),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
