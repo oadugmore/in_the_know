@@ -12,7 +12,6 @@
 # below:
 .git
 .gitignore
-models
 
 node_modules
 __pycache__

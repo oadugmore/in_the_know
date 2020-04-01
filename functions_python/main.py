@@ -1,30 +1,34 @@
+from twitter import Twitter, OAuth2
 import spacy
 import os
-from twitter import *
-from dotenv import load_dotenv
 import json
-import pandas as pd
-load_dotenv()
+from dotenv import load_dotenv
 
+load_dotenv()
 model_dir = './models'
 score_threshold = 5
 
-
 def get_situations(request):
-    # Use the base model from spaCy
-    nlp = spacy.load('en_core_web_sm')
-    ruler = spacy.pipeline.EntityRuler(nlp)
-
-    twitter = Twitter(auth=OAuth2(
-        bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
-
     request_args = request.args
     if request_args and 'loc' in request_args:
         placeName = request_args['loc']
     else:
         placeName = "Elko"
 
-    searchRequest = twitter.search.tweets(q=placeName, lang="en", count=50)
+    searchResult = twitterQuery(placeName)
+    return json.dumps(searchResult)
+
+
+#@profile
+def twitterQuery(searchQuery):
+    # Use the base model from spaCy
+    nlp = spacy.load(model_dir)
+    ruler = spacy.pipeline.EntityRuler(nlp)
+
+    twitter = Twitter(auth=OAuth2(
+        bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
+
+    searchRequest = twitter.search.tweets(q=searchQuery, lang="en", count=50)
 
     # searchText = "sampletext"
     # with open('search.txt', 'r') as searchFile:
@@ -85,7 +89,7 @@ def get_situations(request):
                 elif ent.label_ == "GPE":
                     locCount += 1
                     ent_text_lower = str.lower(ent.text)
-                    print("Entity text: " + str.lower(ent.text))
+                    #print("Entity text: " + str.lower(ent.text))
                     locations[ent_text_lower] = locations.get(
                         ent_text_lower, 0) + 1
         # keyStatuses.append(status)
@@ -96,14 +100,14 @@ def get_situations(request):
 
         # Get the most prominent situation type.
         #print('All situations detected:')
-        #print(situations)
+        # print(situations)
         sortedSituations = sorted(
             situations.items(), key=lambda kv: kv[1], reverse=True)
         # For now, assume there is one dominant situation.
         situationName = sortedSituations[0][0]
         #print('Name of situation: ' + situationName)
         #print('All locations detected:')
-        #print(locations)
+        # print(locations)
         sortedLocations = sorted(
             locations.items(), key=lambda kv: kv[1], reverse=True)
 
@@ -113,9 +117,10 @@ def get_situations(request):
         for loc in sortedLocations:
             frequency = loc[1] / locCount
             locationsList.append({'name': loc[0], 'frequency': frequency})
-        
+
         # Only using one dominant situation for now
-        situationsList.append({'type': situationName, 'locations': locationsList, 'statuses': keyStatuses})
+        situationsList.append(
+            {'type': situationName, 'locations': locationsList, 'statuses': keyStatuses})
 
         # Final JSON construction
         # For some reason flutter crashes when I try to include statuses
@@ -124,8 +129,7 @@ def get_situations(request):
     else:
         print("This result did not meet the threshold to be included in the returned data.")
 
-    return json.dumps(result)
-
+    return result
 
 def explain(request):
     # Use the base model from spaCy
@@ -142,23 +146,27 @@ def explain(request):
     # print(string)
     return "Analyzed " + sentence
 
-
 # This function will NOT work on the server because files become read-only.
 # This is only if I need to make significant modifications to the base model.
-def train(request):
+
+
+def train():
     # load
-    nlp = spacy.load(model_dir)
-
-    # if not os.path.isdir(model_dir):
-    #    print("Creating directory", model_dir)
-    #    os.mkdir(model_dir)
-    # nlp.to_disk(model_dir)
-    # print("Saved model to", model_dir)
-
     # print("Loading model from", model_dir)
     # nlp2 = spacy.load(model_dir)
+    nlp = spacy.load('en_core_web_sm')
+
+    if not os.path.isdir(model_dir):
+       print("Creating directory", model_dir)
+       os.mkdir(model_dir)
+
 
     # perform modifications
 
     # save
     nlp.to_disk(model_dir)
+    print("Saved model to", model_dir)
+
+if __name__ == "__main__":
+    twitterQuery("police activity")
+    #train()
