@@ -69,13 +69,13 @@ class SituationDetailPageState extends State<SituationDetailPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 20, bottom: 20, left: 8),
-            child: Text(
-              'News',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 20, bottom: 20, left: 8),
+          //   child: Text(
+          //     'News',
+          //     style: Theme.of(context).textTheme.headline6,
+          //   ),
+          // ),
           // Container(
           //   color: Colors.grey[200],
           //   height: 200,
