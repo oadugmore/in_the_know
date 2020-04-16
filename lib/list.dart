@@ -28,7 +28,9 @@ class SituationListPageState extends State<SituationListPage> {
     // local testing URL
     //var url = 'http://10.0.2.2:8080?loc=' + safeQuery;
     //var url = 'http://192.168.1.101:8080?loc=' + safeQuery;
-    var url = 'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations?loc=' + safeQuery;
+    var url =
+        'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations?loc=' +
+            safeQuery;
 
     try {
       var response = await http.get(url);
@@ -57,15 +59,33 @@ class SituationListPageState extends State<SituationListPage> {
       ),
       body: Center(
         child: Column(children: <Widget>[
-          TextField(
-            onSubmitted: (value) async {
-              await _getNerData(value);
-            },
-            onChanged: (value) => _nerQuery = value,
-          ),
-          RaisedButton(
-            onPressed: () async => await _getNerData(_nerQuery),
-            child: Text('Refresh'),
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 0,
+                ),
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Enter location or other search term',
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: (value) async => await _getNerData(value),
+                    onChanged: (value) => _nerQuery = value,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async => await _getNerData(_nerQuery),
+                  icon: Icon(Icons.search),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: (_situations.length == 0)
