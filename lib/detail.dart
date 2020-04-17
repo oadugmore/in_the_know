@@ -38,32 +38,23 @@ class SituationDetailPageState extends State<SituationDetailPage> {
             ),
           ),
           Container(
-            color: Colors.grey[200],
+            color: Theme.of(context).backgroundColor,
             height: 250,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
               itemCount: widget.currentSituation.statuses.length,
               itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: 200,
-                  child: Material(
-                    color: Colors.white,
-                    child: InkWell(
-                      onTap: () async {
-                        var url =
-                            'https://twitter.com/u/status/${widget.currentSituation.statuses[index].statusId.toString()}';
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },
+                return Card(
+                  color: Theme.of(context).canvasColor,
+                  child: InkWell(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 0),
+                      width: 200,
                       child: Column(
-                        children: <Widget>[
+                        children: [
                           Container(
-                            color: Colors.grey[400],
+                            color: Theme.of(context).accentColor,
                             child: Icon(
                               Icons.person,
                               size: 80,
@@ -72,6 +63,7 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                             width: 200,
                           ),
                           Container(
+                            // color: Theme.of(context).canvasColor,
                             padding: EdgeInsets.all(8),
                             child: Column(
                               children: <Widget>[
@@ -96,6 +88,15 @@ class SituationDetailPageState extends State<SituationDetailPage> {
                         ],
                       ),
                     ),
+                    onTap: () async {
+                      var url =
+                          'https://twitter.com/u/status/${widget.currentSituation.statuses[index].statusId.toString()}';
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    },
                   ),
                 );
               },
