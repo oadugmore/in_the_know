@@ -11,15 +11,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'In The Know',
       theme: ThemeData(
-        primarySwatch: Colors.lime,
-        cardColor: Colors.amber[400],
+        primarySwatch: Colors.amber,
+        buttonColor: Colors.amber[800],
         accentColor: Colors.lightBlue[300],
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primarySwatch: Colors.lime,
-        cardColor: Colors.amber[800],
-        accentColor: Colors.blue
+        primarySwatch: Colors.amber,
+        buttonColor: Colors.amber[900],
+        accentColor: Colors.blueAccent,
       ),
       home: SituationListPage(title: 'What\'s Happening'),
     );

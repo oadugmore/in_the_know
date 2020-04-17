@@ -94,63 +94,29 @@ class SituationListPageState extends State<SituationListPage> {
                     padding: const EdgeInsets.all(8.0),
                     itemCount: _situations.length,
                     itemBuilder: (context, index) {
+                      Situation currentSituation = _situations[index];
+                      String titleText = currentSituation.type;
+                      if (currentSituation.locations.length > 0) {
+                        titleText +=
+                            ' near ${currentSituation.locations[0].name}';
+                      } else {
+                        titleText += ', location unknown';
+                      }
+                      String subtitleText = '${currentSituation.statuses.length} people tweeting';
                       return Card(
+                        color: Theme.of(context).buttonColor,
                         child: ListTile(
-                          title: Text('SITUATION: ${_situations[index].type}'),
-                          subtitle: Container(
-                            margin: EdgeInsets.only(top: 4),
-                            child: Table(
-                              children: [
-                                TableRow(
-                                  children: [
-                                    Text(
-                                      'Location',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Frequency',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                for (var location
-                                    in _situations[index].locations)
-                                  TableRow(
-                                    children: [
-                                      Text('${location.name}'),
-                                      Text(
-                                          '${location.frequency.toStringAsFixed(2)}'),
-                                    ],
-                                  ),
-                              ],
-
-                              //margin: EdgeInsets.only(top: 4),
-                              // children:[ Column(
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   children: <Widget>[
-                              //     Text('Locations mentioned:'),
-                              //     Column(
-                              //       crossAxisAlignment:
-                              //           CrossAxisAlignment.start,
-                              //       children: [
-                              //         for (var location
-                              //             in _situations[index].locations)
-                              //           Text(
-                              //               '${location.name}, frequency: ${location.frequency.toStringAsFixed(2)}'),
-                              //       ],
-                              //     ),
-                              //                         ],
-                              // ),
-                            ),
+                          title: Text(titleText),
+                          subtitle: Padding(
+                            padding: EdgeInsets.only(top: 4),
+                            child: Text(subtitleText),
                           ),
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SituationDetailPage(
-                                  currentSituation: _situations[index],
+                                  currentSituation: currentSituation,
                                 ),
                               ),
                             );
