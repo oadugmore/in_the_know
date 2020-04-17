@@ -21,8 +21,13 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.lime,
+        cardColor: Colors.amber[400],
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.lime,
+        cardColor: Colors.amber[800],
+      ),
       home: SituationListPage(title: 'What\'s Happening'),
     );
   }
