@@ -96,6 +96,55 @@ class SituationListPageState extends State<SituationListPage> {
                     itemBuilder: (context, index) {
                       return Card(
                         child: ListTile(
+                          title: Text('SITUATION: ${_situations[index].type}'),
+                          subtitle: Container(
+                            margin: EdgeInsets.only(top: 4),
+                            child: Table(
+                              children: [
+                                TableRow(
+                                  children: [
+                                    Text(
+                                      'Location',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      'Frequency',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                for (var location
+                                    in _situations[index].locations)
+                                  TableRow(
+                                    children: [
+                                      Text('${location.name}'),
+                                      Text(
+                                          '${location.frequency.toStringAsFixed(2)}'),
+                                    ],
+                                  ),
+                              ],
+
+                              //margin: EdgeInsets.only(top: 4),
+                              // children:[ Column(
+                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                              //   children: <Widget>[
+                              //     Text('Locations mentioned:'),
+                              //     Column(
+                              //       crossAxisAlignment:
+                              //           CrossAxisAlignment.start,
+                              //       children: [
+                              //         for (var location
+                              //             in _situations[index].locations)
+                              //           Text(
+                              //               '${location.name}, frequency: ${location.frequency.toStringAsFixed(2)}'),
+                              //       ],
+                              //     ),
+                              //                         ],
+                              // ),
+                            ),
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -106,289 +155,18 @@ class SituationListPageState extends State<SituationListPage> {
                               ),
                             );
                           },
-                          title: Text('SITUATION: ${_situations[index].type}'),
-                          subtitle: Column(
-                            children: <Widget>[
-                              Text('Locations mentioned:'),
-                              Column(
-                                children: [
-                                  for (var location
-                                      in _situations[index].locations)
-                                    Text(
-                                        '${location.name}, frequency: ${location.frequency.toString()}'),
-                                ],
-                              ),
-                            ],
-                          ),
                         ),
                       );
                     },
                   ),
           ),
         ]),
-
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        // children: <Widget>[
-        //   Container(
-        //     margin: EdgeInsets.only(top: 20, bottom: 20, left: 8),
-        //     child: Text(
-        //       'News',
-        //       style: Theme.of(context).textTheme.headline6,
-        //     ),
-        //   ),
-        //   Container(
-        //     color: Colors.grey[200],
-        //     height: 200,
-        //     child: ListView(
-        //       scrollDirection: Axis.horizontal,
-        //       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        //       children: <Widget>[
-        //         Container(
-        //           margin: EdgeInsets.symmetric(horizontal: 4),
-        //           width: 200,
-        //           child: Material(
-        //             color: Colors.white,
-        //             child: InkWell(
-        //               onTap: () => {/* TODO */},
-        //               child: Column(
-        //                 children: <Widget>[
-        //                   Container(
-        //                     color: Colors.grey[400],
-        //                     child: Icon(
-        //                       Icons.image,
-        //                       size: 100,
-        //                     ),
-        //                     height: 100,
-        //                     width: 200,
-        //                   ),
-        //                   Container(
-        //                     padding: EdgeInsets.all(8),
-        //                     child: Column(
-        //                       children: <Widget>[
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             'KTLA',
-        //                             style:
-        //                                 Theme.of(context).textTheme.bodyText1,
-        //                           ),
-        //                         ),
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             'Chase in LA',
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //         Container(
-        //           margin: EdgeInsets.symmetric(horizontal: 4),
-        //           width: 200,
-        //           child: Material(
-        //             color: Colors.white,
-        //             child: InkWell(
-        //               onTap: () => {/* TODO */},
-        //               child: Column(
-        //                 children: <Widget>[
-        //                   Container(
-        //                     color: Colors.grey[400],
-        //                     child: Icon(
-        //                       Icons.image,
-        //                       size: 100,
-        //                     ),
-        //                     height: 100,
-        //                     width: 200,
-        //                   ),
-        //                   Container(
-        //                     padding: EdgeInsets.all(8),
-        //                     child: Column(
-        //                       children: <Widget>[
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             'ABC7',
-        //                             style:
-        //                                 Theme.of(context).textTheme.bodyText1,
-        //                           ),
-        //                         ),
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             'Unfolding chaos in the downtown area',
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        //   Container(
-        //     margin: EdgeInsets.only(top: 20, bottom: 20, left: 8),
-        //     child: Text(
-        //       'Twitter',
-        //       style: Theme.of(context).textTheme.headline6,
-        //     ),
-        //   ),
-        //   Container(
-        //     color: Colors.grey[200],
-        //     height: 200,
-        //     child: ListView(
-        //       scrollDirection: Axis.horizontal,
-        //       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        //       children: <Widget>[
-        //         Container(
-        //           margin: EdgeInsets.symmetric(horizontal: 4),
-        //           width: 200,
-        //           child: Material(
-        //             color: Colors.white,
-        //             child: InkWell(
-        //               onTap: () => {/* TODO */},
-        //               child: Column(
-        //                 children: <Widget>[
-        //                   Container(
-        //                     color: Colors.grey[400],
-        //                     child: Icon(
-        //                       Icons.person,
-        //                       size: 100,
-        //                     ),
-        //                     height: 100,
-        //                     width: 200,
-        //                   ),
-        //                   Container(
-        //                     padding: EdgeInsets.all(8),
-        //                     child: Column(
-        //                       children: <Widget>[
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             '@LAPD',
-        //                             style:
-        //                                 Theme.of(context).textTheme.bodyText1,
-        //                           ),
-        //                         ),
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             '"Avoid this intersection for now."',
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //         Container(
-        //           margin: EdgeInsets.symmetric(horizontal: 4),
-        //           width: 200,
-        //           child: Material(
-        //             color: Colors.white,
-        //             child: InkWell(
-        //               onTap: () => {/* TODO */},
-        //               child: Column(
-        //                 children: <Widget>[
-        //                   Container(
-        //                     color: Colors.grey[400],
-        //                     child: Icon(
-        //                       Icons.person,
-        //                       size: 100,
-        //                     ),
-        //                     height: 100,
-        //                     width: 200,
-        //                   ),
-        //                   Container(
-        //                     padding: EdgeInsets.all(8),
-        //                     child: Column(
-        //                       children: <Widget>[
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             '@twitteruser335',
-        //                             style:
-        //                                 Theme.of(context).textTheme.bodyText1,
-        //                           ),
-        //                         ),
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             '"I saw it! They\'re headed towards Main Street!"',
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //         Container(
-        //           margin: EdgeInsets.symmetric(horizontal: 4),
-        //           width: 200,
-        //           child: Material(
-        //             color: Colors.white,
-        //             child: InkWell(
-        //               onTap: () => {/* TODO */},
-        //               child: Column(
-        //                 children: <Widget>[
-        //                   Container(
-        //                     color: Colors.grey[400],
-        //                     child: Icon(
-        //                       Icons.person,
-        //                       size: 100,
-        //                     ),
-        //                     height: 100,
-        //                     width: 200,
-        //                   ),
-        //                   Container(
-        //                     padding: EdgeInsets.all(8),
-        //                     child: Column(
-        //                       children: <Widget>[
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             '@unituint',
-        //                             style:
-        //                                 Theme.of(context).textTheme.bodyText1,
-        //                           ),
-        //                         ),
-        //                         Align(
-        //                           alignment: Alignment.topLeft,
-        //                           child: Text(
-        //                             '"What\'s all that noise?"',
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _testTwitterApi,
-      //   child: Icon(Icons.new_releases),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+
+    // floatingActionButton: FloatingActionButton(
+    //   onPressed: _testTwitterApi,
+    //   child: Icon(Icons.new_releases),
+    // ), // This trailing comma makes auto-formatting nicer for build methods.
   }
 }
