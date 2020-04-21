@@ -19,6 +19,7 @@ class SituationListPage extends StatefulWidget {
 class SituationListPageState extends State<SituationListPage> {
   String _nerQuery = '';
   String _nerData = '';
+  bool _loading = false;
   var _situations = new List<Situation>();
 
   _getNerData(String query) async {
@@ -31,6 +32,9 @@ class SituationListPageState extends State<SituationListPage> {
     var url =
         'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations?loc=' +
             safeQuery;
+    setState(() {
+      _loading = true;
+    });
 
     try {
       var response = await http.get(url);
@@ -49,6 +53,63 @@ class SituationListPageState extends State<SituationListPage> {
     } catch (exception) {
       print('Error: ' + exception.toString());
     }
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  Widget _situationsWidget() {
+    if (_loading) {
+      return Container(
+        margin: EdgeInsets.only(top: 20),
+        height: 80,
+        width: 80,
+        child: CircularProgressIndicator(
+          strokeWidth: 8,
+        ),
+      );
+    }
+    if (_situations.length == 0) {
+      String message = _nerQuery == '' ? 'Type something in the box to get started!' : 'No situations found.';
+      return Text(message);
+    }
+    return Expanded(
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        itemCount: _situations.length,
+        itemBuilder: (context, index) {
+          Situation currentSituation = _situations[index];
+          String titleText = currentSituation.type;
+          if (currentSituation.locations.length > 0) {
+            titleText += ' near ${currentSituation.locations[0].name}';
+          } else {
+            titleText += ', location unknown';
+          }
+          String subtitleText =
+              '${currentSituation.statuses.length} people tweeting';
+          return Card(
+            color: Theme.of(context).buttonColor,
+            child: ListTile(
+              title: Text(titleText),
+              subtitle: Padding(
+                padding: EdgeInsets.only(top: 4),
+                child: Text(subtitleText),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SituationDetailPage(
+                      currentSituation: currentSituation,
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -58,75 +119,39 @@ class SituationListPageState extends State<SituationListPage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(children: <Widget>[
-          Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 0,
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    width: 0,
+                  ),
                 ),
               ),
-            ),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter location or other search term',
-                      border: InputBorder.none,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter location or other search term',
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: (value) async => await _getNerData(value),
+                      onChanged: (value) => _nerQuery = value,
                     ),
-                    onSubmitted: (value) async => await _getNerData(value),
-                    onChanged: (value) => _nerQuery = value,
                   ),
-                ),
-                IconButton(
-                  onPressed: () async => await _getNerData(_nerQuery),
-                  icon: Icon(Icons.search),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () async => await _getNerData(_nerQuery),
+                    icon: Icon(Icons.search),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: (_situations.length == 0)
-                ? Text('No situations found.')
-                : ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: _situations.length,
-                    itemBuilder: (context, index) {
-                      Situation currentSituation = _situations[index];
-                      String titleText = currentSituation.type;
-                      if (currentSituation.locations.length > 0) {
-                        titleText +=
-                            ' near ${currentSituation.locations[0].name}';
-                      } else {
-                        titleText += ', location unknown';
-                      }
-                      String subtitleText = '${currentSituation.statuses.length} people tweeting';
-                      return Card(
-                        color: Theme.of(context).buttonColor,
-                        child: ListTile(
-                          title: Text(titleText),
-                          subtitle: Padding(
-                            padding: EdgeInsets.only(top: 4),
-                            child: Text(subtitleText),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SituationDetailPage(
-                                  currentSituation: currentSituation,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ]),
+            _situationsWidget(),
+          ],
+        ),
       ),
     );
 
