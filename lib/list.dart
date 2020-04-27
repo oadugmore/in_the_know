@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:in_the_know/detail.dart';
 import 'situation.dart';
 
@@ -70,7 +66,9 @@ class SituationListPageState extends State<SituationListPage> {
       );
     }
     if (_situations.length == 0) {
-      String message = _nerQuery == '' ? 'Type something in the box to get started!' : 'No situations found.';
+      String message = _nerQuery == ''
+          ? 'Type something in the box to get started!'
+          : 'No situations found.';
       return Text(message);
     }
     return Expanded(
@@ -154,10 +152,5 @@ class SituationListPageState extends State<SituationListPage> {
         ),
       ),
     );
-
-    // floatingActionButton: FloatingActionButton(
-    //   onPressed: _testTwitterApi,
-    //   child: Icon(Icons.new_releases),
-    // ), // This trailing comma makes auto-formatting nicer for build methods.
   }
 }
