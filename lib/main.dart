@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'list.dart';
 
-void main() => runApp(MyApp());
+// This "Headless Task" is run when app is terminated.
+// void backgroundFetchHeadlessTask(String taskId) async {
+//   print('[BackgroundFetch] Headless event received.');
+//   BackgroundFetch.finish(taskId);
+// }
+
+void main() {
+  runApp(MyApp());
+
+  // Register to receive BackgroundFetch events after app is terminated.
+  // Requires {stopOnTerminate: false, enableHeadless: true}
+  //BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

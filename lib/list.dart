@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_the_know/detail.dart';
+import 'package:background_fetch/background_fetch.dart';
 import 'situation.dart';
 
 class SituationListPage extends StatefulWidget {
@@ -17,6 +18,8 @@ class SituationListPageState extends State<SituationListPage> {
   String _nerData = '';
   bool _loading = false;
   var _situations = new List<Situation>();
+  bool _backgroundTaskEnabled = false;
+  bool _backgroundTaskConfigured = false;
 
   _getNerData(String query) async {
     if (query.trim().isEmpty) return null;
@@ -52,6 +55,36 @@ class SituationListPageState extends State<SituationListPage> {
     setState(() {
       _loading = false;
     });
+  }
+
+  _toggleBackgroundTaskEnabled(bool enabled) {
+    setState(() {
+      _backgroundTaskEnabled = enabled;
+    });
+    if (_backgroundTaskEnabled) {
+      if (_backgroundTaskConfigured) {
+        BackgroundFetch.start();
+      } else {
+        _configureBackgroundTask();
+      }
+    } else {
+      BackgroundFetch.stop();
+    }
+  }
+
+  _configureBackgroundTask() async {
+    BackgroundFetch.configure(
+        BackgroundFetchConfig(
+          minimumFetchInterval: 5,
+          stopOnTerminate: false,
+          enableHeadless: true,
+          requiredNetworkType: NetworkType.ANY,
+        ), (String taskId) async {
+      print('hello from task ID $taskId');
+      showDialog(context: context, child: Text('hello from task ID $taskId'));
+      BackgroundFetch.finish(taskId);
+    }).then((int status) => print('done')).catchError((e) => print('error $e'));
+    _backgroundTaskConfigured = true;
   }
 
   Widget _situationsWidget() {
@@ -119,6 +152,15 @@ class SituationListPageState extends State<SituationListPage> {
       body: Center(
         child: Column(
           children: <Widget>[
+            Row(
+              children: <Widget>[
+                Text('Enable background task'),
+                Switch(
+                  value: _backgroundTaskEnabled,
+                  onChanged: _toggleBackgroundTaskEnabled,
+                ),
+              ],
+            ),
             Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
