@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'list.dart';
 
@@ -8,12 +9,22 @@ import 'list.dart';
 //   BackgroundFetch.finish(taskId);
 // }
 
-void main() {
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+NotificationAppLaunchDetails notificationAppLaunchDetails;
+ValueNotifier notificationSelected = ValueNotifier(null);
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   runApp(MyApp());
 
-  // Register to receive BackgroundFetch events after app is terminated.
-  // Requires {stopOnTerminate: false, enableHeadless: true}
-  //BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+}
+
+Future selectNotification(String payload) async {
+  if (payload != null) {
+    print('notification payload: $payload');
+  }
+  notificationSelected.value = payload;
 }
 
 class MyApp extends StatelessWidget {

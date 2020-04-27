@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_the_know/detail.dart';
 import 'package:background_fetch/background_fetch.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'situation.dart';
 
 class SituationListPage extends StatefulWidget {
@@ -20,6 +21,12 @@ class SituationListPageState extends State<SituationListPage> {
   var _situations = new List<Situation>();
   bool _backgroundTaskEnabled = false;
   bool _backgroundTaskConfigured = false;
+
+  @override
+  void initState() {
+    super.initState();
+    print('initialized SituationListPageState');
+  }
 
   _getNerData(String query) async {
     if (query.trim().isEmpty) return null;
@@ -62,11 +69,11 @@ class SituationListPageState extends State<SituationListPage> {
       _backgroundTaskEnabled = enabled;
     });
     if (_backgroundTaskEnabled) {
-      if (_backgroundTaskConfigured) {
-        BackgroundFetch.start();
-      } else {
-        _configureBackgroundTask();
-      }
+      //if (_backgroundTaskConfigured) {
+      //BackgroundFetch.start();
+      //} else {
+      _configureBackgroundTask();
+      //}
     } else {
       BackgroundFetch.stop();
     }
@@ -74,17 +81,36 @@ class SituationListPageState extends State<SituationListPage> {
 
   _configureBackgroundTask() async {
     BackgroundFetch.configure(
-        BackgroundFetchConfig(
-          minimumFetchInterval: 5,
-          stopOnTerminate: false,
-          enableHeadless: true,
-          requiredNetworkType: NetworkType.ANY,
-        ), (String taskId) async {
-      print('hello from task ID $taskId');
-      showDialog(context: context, child: Text('hello from task ID $taskId'));
-      BackgroundFetch.finish(taskId);
-    }).then((int status) => print('done')).catchError((e) => print('error $e'));
+            BackgroundFetchConfig(
+              minimumFetchInterval: 15,
+              stopOnTerminate: false,
+              enableHeadless: true,
+              requiredNetworkType: NetworkType.ANY,
+            ),
+            _backgroundTask)
+        .then((int status) => print('Configured background task'))
+        .catchError((e) => print('Error configuring background task: $e'));
+
+    BackgroundFetch.scheduleTask(TaskConfig(
+      taskId: 'com.oadugmore.customtask',
+      delay: 5000,
+      periodic: false,
+      enableHeadless: true,
+    ));
+
     _backgroundTaskConfigured = true;
+  }
+
+  _backgroundTask(String taskId) async {
+    print('hello from task ID $taskId');
+    await _getNerData(_nerQuery);
+    if (_situations.length > 0) {
+      print('found situations. sending notification...');
+
+    } else {
+      print('didnt find any situations.');
+    }
+    BackgroundFetch.finish(taskId);
   }
 
   Widget _situationsWidget() {
