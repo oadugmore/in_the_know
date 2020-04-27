@@ -1,63 +1,44 @@
 from twitter import Twitter, OAuth2
 import spacy
-import os
 import json
+import os
 from dotenv import load_dotenv
 
+# load global data
 load_dotenv()
 model_dir = './models'
-score_threshold = 5
+nlp = spacy.load(model_dir)
+SCORE_THRESHOLD = 5
+TWEET_COUNT = 50
+
+# establish connection to Twitter
+twitter = Twitter(auth=OAuth2(
+    bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
+print('Connected to Twitter.')
+
 
 def get_situations(request):
     request_args = request.args
-    if request_args and 'loc' in request_args:
-        placeName = request_args['loc']
+    if request_args and 'q' in request_args:
+        query = request_args['q']
     else:
-        placeName = "Elko"
+        query = "Elko"
 
-    searchResult = twitterQuery(placeName)
-    return json.dumps(searchResult)
+    search_result = twitter_query(query, 'en')
+    return json.dumps(search_result)
 
 
-#@profile
-def twitterQuery(searchQuery):
-    # Use the base model from spaCy
-    nlp = spacy.load(model_dir)
-    ruler = spacy.pipeline.EntityRuler(nlp)
-
-    twitter = Twitter(auth=OAuth2(
-        bearer_token=os.environ.get('TWITTER_ACCESS_TOKEN')))
-
-    searchRequest = twitter.search.tweets(q=searchQuery, lang="en", count=50)
-
-    # searchText = "sampletext"
-    # with open('search.txt', 'r') as searchFile:
-    #     searchText = searchFile.read()
-
-    # searchRequest = {  # Sample search request
-    #     "statuses": [
-    #         {
-    #             "text": searchText,
-    #             "user": {"verified": True}
-    #         }
-    #     ]
-    # }
-
-    # Add "situation" patterns
-    patterns = dict()
-    with open('patterns.json', 'r') as patternfile:
-        patterns = json.load(patternfile)['patterns']
-
-    ruler.add_patterns(patterns)
-    nlp.add_pipe(ruler)
+def twitter_query(search_query, lang):
+    twitter_response = twitter.search.tweets(
+        q=search_query, lang=lang, count=TWEET_COUNT)
 
     result = ''
     score = 0
     situations = dict()
     locations = dict()
     locCount = 0
-    keyStatuses = []
-    for status in searchRequest['statuses']:
+    key_statuses = []
+    for status in twitter_response['statuses']:
         sentence = status['text']
         #result += "Raw tweet text: " + sentence + " "
         detectedSituation = False
@@ -76,7 +57,7 @@ def twitterQuery(searchQuery):
 
         # if it has a situation, add all situations and geographical locations
         if detectedSituation:
-            keyStatuses.append(status)
+            key_statuses.append(status)
             score += 1
             if status['user']['verified']:
                 score += 4
@@ -120,22 +101,17 @@ def twitterQuery(searchQuery):
 
         # Only using one dominant situation for now
         situationsList.append(
-            {'type': situationName, 'locations': locationsList, 'statuses': keyStatuses})
+            {'type': situationName, 'locations': locationsList, 'statuses': key_statuses})
 
         # Final JSON construction
-        # For some reason flutter crashes when I try to include statuses
         result = {'situations': situationsList}
-        #result = {'situations': situationsList}
     else:
         print("This result did not meet the threshold to be included in the returned data.")
 
     return result
 
-def explain(request):
-    # Use the base model from spaCy
-    nlp = spacy.load('en_core_web_sm')
-    # ruler = spacy.pipeline.EntityRuler(nlp)
 
+def explain(request):
     sentence = "RT @MichelleWilli7: Subject is in custody. Elko County SWAT has custody of suspect. There are explosives in the vehicle. We are gonna nee"
 
     result = ''
@@ -147,26 +123,44 @@ def explain(request):
     return "Analyzed " + sentence
 
 # This function will NOT work on the server because files become read-only.
-# This is only if I need to make significant modifications to the base model.
-
-
+# This is only for training the model offline.
 def train():
     # load
-    # print("Loading model from", model_dir)
-    # nlp2 = spacy.load(model_dir)
-    nlp = spacy.load('en_core_web_sm')
+    nlp_train = spacy.load('en_core_web_sm')
 
     if not os.path.isdir(model_dir):
-       print("Creating directory", model_dir)
-       os.mkdir(model_dir)
-
+        print("Creating directory", model_dir)
+        os.mkdir(model_dir)
 
     # perform modifications
 
+    # Add "situation" patterns
+    ruler = spacy.pipeline.EntityRuler(nlp_train)
+    patterns = dict()
+    with open('patterns.json', 'r') as patternfile:
+        patterns = json.load(patternfile)['patterns']
+
+    ruler.add_patterns(patterns)
+    nlp_train.add_pipe(ruler)
+
     # save
-    nlp.to_disk(model_dir)
+    nlp_train.to_disk(model_dir)
     print("Saved model to", model_dir)
 
+
 if __name__ == "__main__":
-    twitterQuery("police activity")
+    # searchText = "sampletext"
+    # with open('search.txt', 'r') as searchFile:
+    #     searchText = searchFile.read()
+
+    # searchRequest = {  # Sample search request
+    #     "statuses": [
+    #         {
+    #             "text": searchText,
+    #             "user": {"verified": True}
+    #         }
+    #     ]
+    # }
+
+    twitter_query('police activity', 'en')
     #train()

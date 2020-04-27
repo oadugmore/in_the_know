@@ -1,0 +1,7 @@
+{"label":"SITUATION","pattern":[{"LEMMA":{"IN":["gunshot","gunfire","shooting","shooter"]}}],"id":"Gunfire"}
+{"label":"SITUATION","pattern":[{"LEMMA":{"IN":["shot","gunshot"]}},{"POS":{"IN":["VERB","AUX"]},"OP":"*"},{"LEMMA":{"IN":["fire","gunfire"]}}],"id":"Gunfire"}
+{"label":"SITUATION","pattern":[{"LEMMA":{"IN":["manhunt","Manhunt"]}}],"id":"Police Activity"}
+{"label":"SITUATION","pattern":[{"ORTH":{"REGEX":"SWAT"}}],"id":"Police Activity"}
+{"label":"SITUATION","pattern":[{"LEMMA":"police"},{"LEMMA":{"IN":["activity","chase"]}}],"id":"Police Activity"}
+{"label":"SITUATION","pattern":[{"LEMMA":{"IN":["have","be","officer","trooper","Trooper","police","suspect"]}},{"LEMMA":{"IN":["shoot","kill"]},"POS":"VERB"}],"id":"Police Activity"}
+{"label":"SITUATION","pattern":[{"LEMMA":{"IN":["officer","trooper","Trooper","police","suspect"]}},{"LEMMA":"down"}],"id":"Police Activity"}

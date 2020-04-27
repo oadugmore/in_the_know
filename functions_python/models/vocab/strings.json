@@ -1137,5 +1137,9 @@
   "relcl||nsubjpass",
   "appos||nsubjpass",
   "advcl||nsubj",
-  "FAC"
+  "FAC",
+  "SITUATION||Gunfire",
+  "SITUATION||Police Activity",
+  "police",
+  "down"
 ]

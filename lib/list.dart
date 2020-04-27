@@ -23,10 +23,10 @@ class SituationListPageState extends State<SituationListPage> {
     var result;
     String safeQuery = Uri.encodeComponent(query);
     // local testing URL
-    //var url = 'http://10.0.2.2:8080?loc=' + safeQuery;
-    //var url = 'http://192.168.1.101:8080?loc=' + safeQuery;
+    //var url = 'http://10.0.2.2:8080?q=' + safeQuery;
+    //var url = 'http://192.168.1.101:8080?q=' + safeQuery;
     var url =
-        'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations?loc=' +
+        'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations?q=' +
             safeQuery;
     setState(() {
       _loading = true;
