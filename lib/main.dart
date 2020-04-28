@@ -3,21 +3,27 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'list.dart';
 
-// This "Headless Task" is run when app is terminated.
-// void backgroundFetchHeadlessTask(String taskId) async {
-//   print('[BackgroundFetch] Headless event received.');
-//   BackgroundFetch.finish(taskId);
-// }
-
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 ValueNotifier notificationSelected = ValueNotifier(null);
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  initializeNotificationSettings();
   runApp(MyApp());
+}
 
+initializeNotificationSettings() async {
+  notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  var initializationSettingsAndroid =
+      AndroidInitializationSettings('ic_stat_name');
+  var initializationSettingsIOS;
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: selectNotification);
 }
 
 Future selectNotification(String payload) async {

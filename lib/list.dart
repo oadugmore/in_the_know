@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:in_the_know/detail.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:in_the_know/main.dart';
 import 'situation.dart';
 
 class SituationListPage extends StatefulWidget {
@@ -25,7 +26,22 @@ class SituationListPageState extends State<SituationListPage> {
   @override
   void initState() {
     super.initState();
-    print('initialized SituationListPageState');
+    notificationSelected.addListener(() {
+      if (_situations.isNotEmpty) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SituationDetailPage(
+              currentSituation: _situations.first,
+            ),
+          ),
+        );
+      }
+      else {
+        print('Error: No situations detected, even though a notification was clicked.');
+      }
+    });
+    print('added listener');
   }
 
   _getNerData(String query) async {
@@ -106,7 +122,7 @@ class SituationListPageState extends State<SituationListPage> {
     await _getNerData(_nerQuery);
     if (_situations.length > 0) {
       print('found situations. sending notification...');
-
+      await flutterLocalNotificationsPlugin.show(0, _situations.first.type, '${_situations.first.statuses.length} people Tweeting', null);
     } else {
       print('didnt find any situations.');
     }
