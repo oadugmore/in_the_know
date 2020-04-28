@@ -4,6 +4,7 @@ import 'package:in_the_know/detail.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:in_the_know/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'situation.dart';
 
 class SituationListPage extends StatefulWidget {
@@ -22,10 +23,14 @@ class SituationListPageState extends State<SituationListPage> {
   var _situations = new List<Situation>();
   bool _backgroundTaskEnabled = false;
   bool _backgroundTaskConfigured = false;
+  final backgroundQueryKey = 'backgroundQuery';
+  SharedPreferences prefs;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+
+    prefs = await SharedPreferences.getInstance();
 
     BackgroundFetch.configure(
             BackgroundFetchConfig(
@@ -39,7 +44,8 @@ class SituationListPageState extends State<SituationListPage> {
         .then((int status) => print('Configured background task'))
         .catchError((e) => print('Error configuring background task: $e'));
 
-    notificationSelected.addListener(() {
+    // Add callback for notifiation selected
+    notificationSelected = (() {
       if (_situations.isNotEmpty) {
         Navigator.push(
           context,
@@ -53,8 +59,8 @@ class SituationListPageState extends State<SituationListPage> {
         print(
             'Error: No situations detected, even though a notification was clicked.');
       }
+      //print('added callback');
     });
-    print('added listener');
   }
 
   _getNerData(String query) async {
@@ -126,16 +132,24 @@ class SituationListPageState extends State<SituationListPage> {
     if (_situations.length > 0) {
       print('found situations. sending notification...');
       var androidChannelSpecifics = AndroidNotificationDetails(
-          'channel id', 'channel name', 'channel description');
+        'situations',
+        'Situations',
+        null,
+        color: Theme.of(context).primaryColor,
+        importance: Importance.High,
+        priority: Priority.High,
+      );
       var iOSChannelSpecifics = IOSNotificationDetails();
       var notificationDetails =
           NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
       await flutterLocalNotificationsPlugin.show(
-          0,
-          _situations.first.type,
-          '${_situations.first.statuses.length} people Tweeting',
-          notificationDetails,
-          payload: 'sample payload');
+        0,
+        _situations.first.type,
+        '${_situations.first.statuses.length} people Tweeting',
+        notificationDetails,
+        payload: 'sample payload',
+      );
+      
     } else {
       print('didnt find any situations.');
     }
@@ -209,7 +223,13 @@ class SituationListPageState extends State<SituationListPage> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Text('Enable background task'),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Background search',
+                  ),
+                  onSubmitted: (value) async => await prefs.setString(backgroundQueryKey, value),
+                ),
+                Text('Enabled'),
                 Switch(
                   value: _backgroundTaskEnabled,
                   onChanged: _toggleBackgroundTaskEnabled,

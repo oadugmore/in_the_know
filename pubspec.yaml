@@ -23,6 +23,7 @@ dependencies:
   url_launcher: ^5.4.2
   background_fetch: ^0.5.5
   flutter_local_notifications: ^1.4.2
+  shared_preferences: ^0.5.7
   flutter:
     sdk: flutter
 

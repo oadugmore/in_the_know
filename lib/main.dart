@@ -6,7 +6,8 @@ import 'list.dart';
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 NotificationAppLaunchDetails notificationAppLaunchDetails;
-ValueNotifier notificationSelected = ValueNotifier(null);
+//ValueNotifier notificationSelected = ValueNotifier(null);
+VoidCallback notificationSelected;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,11 +31,11 @@ Future selectNotification(String payload) async {
   if (payload != null) {
     print('notification payload: $payload');
   }
-  if (notificationSelected.value == payload) {
-    print('Duplicate payload.');
-    payload = '';
-  }
-  notificationSelected.value = payload;
+  // if (notificationSelected.value == payload) {
+  //   print('Duplicate payload.');
+  //   payload = '';
+  // }
+  notificationSelected();
 }
 
 class MyApp extends StatelessWidget {
