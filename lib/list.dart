@@ -26,6 +26,19 @@ class SituationListPageState extends State<SituationListPage> {
   @override
   void initState() {
     super.initState();
+
+    BackgroundFetch.configure(
+            BackgroundFetchConfig(
+              minimumFetchInterval: 15,
+              stopOnTerminate: false,
+              enableHeadless: true,
+              startOnBoot: true,
+              requiredNetworkType: NetworkType.ANY,
+            ),
+            _backgroundTask)
+        .then((int status) => print('Configured background task'))
+        .catchError((e) => print('Error configuring background task: $e'));
+
     notificationSelected.addListener(() {
       if (_situations.isNotEmpty) {
         Navigator.push(
@@ -36,9 +49,9 @@ class SituationListPageState extends State<SituationListPage> {
             ),
           ),
         );
-      }
-      else {
-        print('Error: No situations detected, even though a notification was clicked.');
+      } else {
+        print(
+            'Error: No situations detected, even though a notification was clicked.');
       }
     });
     print('added listener');
@@ -88,30 +101,20 @@ class SituationListPageState extends State<SituationListPage> {
       //if (_backgroundTaskConfigured) {
       //BackgroundFetch.start();
       //} else {
-      _configureBackgroundTask();
+      _scheduleBackgroundTask();
       //}
     } else {
       BackgroundFetch.stop();
     }
   }
 
-  _configureBackgroundTask() async {
-    BackgroundFetch.configure(
-            BackgroundFetchConfig(
-              minimumFetchInterval: 15,
-              stopOnTerminate: false,
-              enableHeadless: true,
-              requiredNetworkType: NetworkType.ANY,
-            ),
-            _backgroundTask)
-        .then((int status) => print('Configured background task'))
-        .catchError((e) => print('Error configuring background task: $e'));
-
+  _scheduleBackgroundTask() async {
     BackgroundFetch.scheduleTask(TaskConfig(
       taskId: 'com.oadugmore.customtask',
       delay: 5000,
       periodic: false,
       enableHeadless: true,
+      stopOnTerminate: false,
     ));
 
     _backgroundTaskConfigured = true;
@@ -122,7 +125,17 @@ class SituationListPageState extends State<SituationListPage> {
     await _getNerData(_nerQuery);
     if (_situations.length > 0) {
       print('found situations. sending notification...');
-      await flutterLocalNotificationsPlugin.show(0, _situations.first.type, '${_situations.first.statuses.length} people Tweeting', null);
+      var androidChannelSpecifics = AndroidNotificationDetails(
+          'channel id', 'channel name', 'channel description');
+      var iOSChannelSpecifics = IOSNotificationDetails();
+      var notificationDetails =
+          NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
+      await flutterLocalNotificationsPlugin.show(
+          0,
+          _situations.first.type,
+          '${_situations.first.statuses.length} people Tweeting',
+          notificationDetails,
+          payload: 'sample payload');
     } else {
       print('didnt find any situations.');
     }

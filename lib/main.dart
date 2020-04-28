@@ -30,6 +30,10 @@ Future selectNotification(String payload) async {
   if (payload != null) {
     print('notification payload: $payload');
   }
+  if (notificationSelected.value == payload) {
+    print('Duplicate payload.');
+    payload = '';
+  }
   notificationSelected.value = payload;
 }
 
