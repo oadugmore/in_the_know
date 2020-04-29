@@ -4,6 +4,7 @@ import 'package:in_the_know/detail.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:in_the_know/main.dart';
+import 'package:in_the_know/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'situation.dart';
 
@@ -21,23 +22,16 @@ class SituationListPageState extends State<SituationListPage> {
   String _nerData = '';
   bool _loading = false;
   var _situations = new List<Situation>();
-  bool _backgroundTaskEnabled = false;
-  bool _backgroundTaskConfigured = false;
-  final backgroundQueryKey = 'backgroundQuery';
-  SharedPreferences prefs;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-
-    prefs = await SharedPreferences.getInstance();
 
     BackgroundFetch.configure(
             BackgroundFetchConfig(
               minimumFetchInterval: 15,
               stopOnTerminate: false,
               enableHeadless: true,
-              startOnBoot: true,
               requiredNetworkType: NetworkType.ANY,
             ),
             _backgroundTask)
@@ -99,35 +93,11 @@ class SituationListPageState extends State<SituationListPage> {
     });
   }
 
-  _toggleBackgroundTaskEnabled(bool enabled) {
-    setState(() {
-      _backgroundTaskEnabled = enabled;
-    });
-    if (_backgroundTaskEnabled) {
-      //if (_backgroundTaskConfigured) {
-      //BackgroundFetch.start();
-      //} else {
-      _scheduleBackgroundTask();
-      //}
-    } else {
-      BackgroundFetch.stop();
-    }
-  }
-
-  _scheduleBackgroundTask() async {
-    BackgroundFetch.scheduleTask(TaskConfig(
-      taskId: 'com.oadugmore.customtask',
-      delay: 5000,
-      periodic: false,
-      enableHeadless: true,
-      stopOnTerminate: false,
-    ));
-
-    _backgroundTaskConfigured = true;
-  }
-
   _backgroundTask(String taskId) async {
-    print('hello from task ID $taskId');
+    var prefs = await SharedPreferences.getInstance();
+    _nerQuery = prefs.getString(backgroundQueryKey) ?? '';
+    //print('task ID $taskId');
+    print('running background search with query "$_nerQuery"');
     await _getNerData(_nerQuery);
     if (_situations.length > 0) {
       print('found situations. sending notification...');
@@ -149,14 +119,40 @@ class SituationListPageState extends State<SituationListPage> {
         notificationDetails,
         payload: 'sample payload',
       );
-      
     } else {
       print('didnt find any situations.');
     }
     BackgroundFetch.finish(taskId);
   }
 
+  Widget _enableNotificationsCard() {
+    if (_nerQuery.trim() != '') {
+      return Card(
+        color: Theme.of(context).buttonColor,
+        child: ListTile(
+          title: Text('Get notifications'),
+          subtitle: Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text('Tap to get notifications for this query'),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsPage(
+                  queryForBackgroundTask: _nerQuery,
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+    return null;
+  }
+
   Widget _situationsWidget() {
+    // const listViewKey = 'listview';
     if (_loading) {
       return Container(
         margin: EdgeInsets.only(top: 20),
@@ -173,43 +169,61 @@ class SituationListPageState extends State<SituationListPage> {
           : 'No situations found.';
       return Text(message);
     }
-    return Expanded(
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
-        itemCount: _situations.length,
-        itemBuilder: (context, index) {
-          Situation currentSituation = _situations[index];
-          String titleText = currentSituation.type;
-          if (currentSituation.locations.length > 0) {
-            titleText += ' near ${currentSituation.locations[0].name}';
-          } else {
-            titleText += ', location unknown';
-          }
-          String subtitleText =
-              '${currentSituation.statuses.length} people tweeting';
-          return Card(
-            color: Theme.of(context).buttonColor,
-            child: ListTile(
-              title: Text(titleText),
-              subtitle: Padding(
-                padding: EdgeInsets.only(top: 4),
-                child: Text(subtitleText),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SituationDetailPage(
-                      currentSituation: currentSituation,
+
+    return Column(
+      children: <Widget>[
+        // _enableNotificationsCard(),
+        ListView.builder(
+          padding: const EdgeInsets.all(8.0),
+          itemCount: _situations.length,
+          itemBuilder: (context, index) {
+            Situation currentSituation = _situations[index];
+            String titleText = currentSituation.type;
+            if (currentSituation.locations.length > 0) {
+              titleText += ' near ${currentSituation.locations[0].name}';
+            } else {
+              titleText += ', location unknown';
+            }
+            String subtitleText =
+                '${currentSituation.statuses.length} people tweeting';
+            return Card(
+              color: Theme.of(context).buttonColor,
+              child: ListTile(
+                title: Text(titleText),
+                subtitle: Padding(
+                  padding: EdgeInsets.only(top: 4),
+                  child: Text(subtitleText),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SituationDetailPage(
+                        currentSituation: currentSituation,
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
     );
+  }
+
+  _selectOverflowMenuChoice(OverflowMenuChoice choice) {
+    switch (choice.title) {
+      case 'Settings':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          ),
+        );
+        break;
+      default:
+    }
   }
 
   @override
@@ -217,25 +231,23 @@ class SituationListPageState extends State<SituationListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          PopupMenuButton<OverflowMenuChoice>(
+            onSelected: _selectOverflowMenuChoice,
+            itemBuilder: (context) {
+              return choices.map((OverflowMenuChoice choice) {
+                return PopupMenuItem<OverflowMenuChoice>(
+                  child: Text(choice.title),
+                  value: choice,
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Background search',
-                  ),
-                  onSubmitted: (value) async => await prefs.setString(backgroundQueryKey, value),
-                ),
-                Text('Enabled'),
-                Switch(
-                  value: _backgroundTaskEnabled,
-                  onChanged: _toggleBackgroundTaskEnabled,
-                ),
-              ],
-            ),
             Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -271,3 +283,13 @@ class SituationListPageState extends State<SituationListPage> {
     );
   }
 }
+
+class OverflowMenuChoice {
+  const OverflowMenuChoice({this.title});
+
+  final String title;
+}
+
+const List<OverflowMenuChoice> choices = const <OverflowMenuChoice>[
+  const OverflowMenuChoice(title: 'Settings'),
+];

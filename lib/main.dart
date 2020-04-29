@@ -8,6 +8,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 //ValueNotifier notificationSelected = ValueNotifier(null);
 VoidCallback notificationSelected;
+final backgroundQueryKey = 'backgroundQuery';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
