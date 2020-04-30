@@ -114,10 +114,10 @@ class SituationListPageState extends State<SituationListPage> {
     var prefs = await SharedPreferences.getInstance();
     _nerQuery = prefs.getString(backgroundQueryKey) ?? '';
     //print('task ID $taskId');
-    print('running background search with query "$_nerQuery"');
+    print('Running background search with query "$_nerQuery".');
     await _getNerData(_nerQuery);
     if (_situations.length > 0) {
-      print('found situations. sending notification...');
+      print('Found situations, sending notification...');
       var androidChannelSpecifics = AndroidNotificationDetails(
         'situations',
         'Situations',
@@ -137,20 +137,16 @@ class SituationListPageState extends State<SituationListPage> {
         payload: 'sample payload',
       );
     } else {
-      print('didnt find any situations.');
+      print('Didn\'t find any situations.');
     }
     BackgroundFetch.finish(taskId);
   }
 
   Widget _enableNotificationsCard() {
     return Card(
-      color: Theme.of(context).buttonColor,
+      color: Theme.of(context).primaryColor,
       child: ListTile(
-        title: Text('Get notifications'),
-        subtitle: Padding(
-          padding: EdgeInsets.only(top: 4),
-          child: Text('Tap to get notifications for this query'),
-        ),
+        title: Text('Get notifications for this query'),
         onTap: () {
           Navigator.push(
             context,
@@ -279,7 +275,7 @@ class SituationListPageState extends State<SituationListPage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: _submitQuery(_nerQuery),
+                    onPressed: () => _submitQuery(_nerQuery),
                     icon: Icon(Icons.search),
                   ),
                 ],

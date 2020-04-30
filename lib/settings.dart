@@ -24,11 +24,15 @@ class SettingsPageState extends State<SettingsPage> {
     super.initState();
     if (widget.queryForBackgroundTask != null) {
       _setBackgroundTaskQuery(widget.queryForBackgroundTask);
+      _toggleBackgroundTaskEnabled(true);
     }
     _prefs.then((final prefs) {
-      setState(() {
-        _backgroundTaskEnabled = prefs.getBool(backgroundTaskEnabledKey) ?? false;
-      });
+      if (widget.queryForBackgroundTask == null) {
+        setState(() {
+          _backgroundTaskEnabled =
+              prefs.getBool(backgroundTaskEnabledKey) ?? false;
+        });
+      }
     });
   }
 
@@ -42,7 +46,7 @@ class SettingsPageState extends State<SettingsPage> {
   _setBackgroundTaskQuery(String query) async {
     var prefs = await _prefs;
     await prefs.setString(backgroundQueryKey, query);
-    print('saved $query as background query');
+    print('Saved "$query" as background query.');
   }
 
   _toggleBackgroundTaskEnabled(bool enabled) async {
@@ -61,13 +65,14 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   _scheduleBackgroundTask() async {
-    BackgroundFetch.scheduleTask(TaskConfig(
+    await BackgroundFetch.scheduleTask(TaskConfig(
       taskId: 'com.oadugmore.customtask',
       delay: 5000,
       periodic: false,
       enableHeadless: true,
       stopOnTerminate: false,
     ));
+    print('Background task scheduled, running in 5 seconds.');
   }
 
   @override
