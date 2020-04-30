@@ -22,21 +22,11 @@ class SituationListPageState extends State<SituationListPage> {
   String _nerData = '';
   bool _loading = false;
   var _situations = new List<Situation>();
+  var _prefs = SharedPreferences.getInstance();
 
   @override
   void initState() {
     super.initState();
-
-    BackgroundFetch.configure(
-            BackgroundFetchConfig(
-              minimumFetchInterval: 15,
-              stopOnTerminate: false,
-              enableHeadless: true,
-              requiredNetworkType: NetworkType.ANY,
-            ),
-            _backgroundTask)
-        .then((int status) => print('Configured background task'))
-        .catchError((e) => print('Error configuring background task: $e'));
 
     // Add callback for notifiation selected
     notificationSelected = (() {
@@ -53,12 +43,29 @@ class SituationListPageState extends State<SituationListPage> {
         print(
             'Error: No situations detected, even though a notification was clicked.');
       }
-      //print('added callback');
+    });
+
+    // Configure background fetch when SharedPrefs is available
+    _prefs.then((final prefs) async {
+      var enableBackground = prefs.getBool(backgroundTaskEnabledKey) ?? false;
+      await BackgroundFetch.configure(
+              BackgroundFetchConfig(
+                minimumFetchInterval: 15,
+                stopOnTerminate: false,
+                enableHeadless: true,
+                requiredNetworkType: NetworkType.ANY,
+              ),
+              _backgroundTask)
+          .then((int status) => print('Configured background fetch.'))
+          .catchError((e) => print('Error configuring background fetch: $e'));
+
+      if (!enableBackground) {
+        await BackgroundFetch.stop();
+      }
     });
   }
 
   _getNerData(String query) async {
-    if (query.trim().isEmpty) return null;
     var result;
     String safeQuery = Uri.encodeComponent(query);
     // local testing URL
@@ -91,6 +98,16 @@ class SituationListPageState extends State<SituationListPage> {
     setState(() {
       _loading = false;
     });
+  }
+
+  _submitQuery(String text) {
+    if (text.trim().isEmpty) {
+      setState(() {
+        _situations.clear();
+      });
+      return;
+    }
+    _getNerData(text);
   }
 
   _backgroundTask(String taskId) async {
@@ -126,33 +143,29 @@ class SituationListPageState extends State<SituationListPage> {
   }
 
   Widget _enableNotificationsCard() {
-    if (_nerQuery.trim() != '') {
-      return Card(
-        color: Theme.of(context).buttonColor,
-        child: ListTile(
-          title: Text('Get notifications'),
-          subtitle: Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Text('Tap to get notifications for this query'),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SettingsPage(
-                  queryForBackgroundTask: _nerQuery,
-                ),
-              ),
-            );
-          },
+    return Card(
+      color: Theme.of(context).buttonColor,
+      child: ListTile(
+        title: Text('Get notifications'),
+        subtitle: Padding(
+          padding: EdgeInsets.only(top: 4),
+          child: Text('Tap to get notifications for this query'),
         ),
-      );
-    }
-    return null;
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SettingsPage(
+                queryForBackgroundTask: _nerQuery,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _situationsWidget() {
-    // const listViewKey = 'listview';
     if (_loading) {
       return Container(
         margin: EdgeInsets.only(top: 20),
@@ -163,52 +176,48 @@ class SituationListPageState extends State<SituationListPage> {
         ),
       );
     }
-    if (_situations.length == 0) {
-      String message = _nerQuery == ''
-          ? 'Type something in the box to get started!'
-          : 'No situations found.';
-      return Text(message);
+
+    var cardList = <Card>[];
+    if (_nerQuery.trim() != '') {
+      cardList.add(_enableNotificationsCard());
+    }
+    for (var currentSituation in _situations) {
+      var titleText = currentSituation.type;
+      if (currentSituation.locations.length > 0) {
+        titleText += ' near ${currentSituation.locations[0].name}';
+      } else {
+        titleText += ', location unknown';
+      }
+      var subtitleText = '${currentSituation.statuses.length} people tweeting';
+      cardList.add(
+        Card(
+          color: Theme.of(context).buttonColor,
+          child: ListTile(
+            title: Text(titleText),
+            subtitle: Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(subtitleText),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SituationDetailPage(
+                    currentSituation: currentSituation,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
     }
 
-    return Column(
-      children: <Widget>[
-        // _enableNotificationsCard(),
-        ListView.builder(
-          padding: const EdgeInsets.all(8.0),
-          itemCount: _situations.length,
-          itemBuilder: (context, index) {
-            Situation currentSituation = _situations[index];
-            String titleText = currentSituation.type;
-            if (currentSituation.locations.length > 0) {
-              titleText += ' near ${currentSituation.locations[0].name}';
-            } else {
-              titleText += ', location unknown';
-            }
-            String subtitleText =
-                '${currentSituation.statuses.length} people tweeting';
-            return Card(
-              color: Theme.of(context).buttonColor,
-              child: ListTile(
-                title: Text(titleText),
-                subtitle: Padding(
-                  padding: EdgeInsets.only(top: 4),
-                  child: Text(subtitleText),
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SituationDetailPage(
-                        currentSituation: currentSituation,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ],
+    return Expanded(
+      child: ListView(
+        padding: const EdgeInsets.all(8.0),
+        children: cardList,
+      ),
     );
   }
 
@@ -250,32 +259,36 @@ class SituationListPageState extends State<SituationListPage> {
           children: <Widget>[
             Container(
               margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: 0,
-                  ),
-                ),
-              ),
+              // decoration: BoxDecoration(
+              //   border: Border(
+              //     bottom: BorderSide(
+              //       width: 0,
+              //     ),
+              //   ),
+              // ),
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Enter location or other search term',
-                        border: InputBorder.none,
+                        // border: InputBorder.none,
                       ),
-                      onSubmitted: (value) async => await _getNerData(value),
+                      onSubmitted: _submitQuery,
                       onChanged: (value) => _nerQuery = value,
                     ),
                   ),
                   IconButton(
-                    onPressed: () async => await _getNerData(_nerQuery),
+                    onPressed: _submitQuery(_nerQuery),
                     icon: Icon(Icons.search),
                   ),
                 ],
               ),
             ),
+            if (_situations.length == 0)
+              Text((_nerQuery == '')
+                  ? 'Type something in the box to get started!'
+                  : 'No situations found.'),
             _situationsWidget(),
           ],
         ),

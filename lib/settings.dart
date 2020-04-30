@@ -15,8 +15,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  bool _backgroundTaskEnabled = false;
-  SharedPreferences prefs;
+  var _backgroundTaskEnabled = false;
+  var _prefs = SharedPreferences.getInstance();
   // bool _backgroundTaskConfigured = false;
 
   @override
@@ -25,24 +25,33 @@ class SettingsPageState extends State<SettingsPage> {
     if (widget.queryForBackgroundTask != null) {
       _setBackgroundTaskQuery(widget.queryForBackgroundTask);
     }
-    _initAsync();
+    _prefs.then((final prefs) {
+      setState(() {
+        _backgroundTaskEnabled = prefs.getBool(backgroundTaskEnabledKey) ?? false;
+      });
+    });
   }
 
-  _initAsync() async {
-    prefs = await SharedPreferences.getInstance();
-
-  }
+  // _initAsync() async {
+  //   final prefs = await _prefs;
+  //   setState(() {
+  //     _backgroundTaskEnabled = prefs.getBool(backgroundTaskEnabledKey) ?? false;
+  //   });
+  // }
 
   _setBackgroundTaskQuery(String query) async {
-    var prefs = await SharedPreferences.getInstance();
+    var prefs = await _prefs;
     await prefs.setString(backgroundQueryKey, query);
     print('saved $query as background query');
   }
 
-  _toggleBackgroundTaskEnabled(bool enabled) {
+  _toggleBackgroundTaskEnabled(bool enabled) async {
     setState(() {
       _backgroundTaskEnabled = enabled;
     });
+
+    final prefs = await _prefs;
+    prefs.setBool(backgroundTaskEnabledKey, _backgroundTaskEnabled);
     if (_backgroundTaskEnabled) {
       BackgroundFetch.start();
       // _scheduleBackgroundTask();

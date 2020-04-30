@@ -9,6 +9,7 @@ NotificationAppLaunchDetails notificationAppLaunchDetails;
 //ValueNotifier notificationSelected = ValueNotifier(null);
 VoidCallback notificationSelected;
 final backgroundQueryKey = 'backgroundQuery';
+final backgroundTaskEnabledKey = 'backgroundTaskEnabled';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
