@@ -108,7 +108,7 @@ class SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          if (!kReleaseMode) RaisedButton(
+          if (kDebugMode) RaisedButton(
             onPressed: _scheduleBackgroundTask,
             child: Text('Run in 5 seconds'),
           )

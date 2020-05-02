@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_the_know/detail.dart';
@@ -17,16 +18,19 @@ class SituationListPage extends StatefulWidget {
   createState() => SituationListPageState();
 }
 
-class SituationListPageState extends State<SituationListPage> {
+class SituationListPageState extends State<SituationListPage> with WidgetsBindingObserver {
   String _nerQuery = '';
   String _nerData = '';
   bool _loading = false;
   var _situations = new List<Situation>();
   var _prefs = SharedPreferences.getInstance();
+  bool _useLocalServer = false;
+  AppLifecycleState _appLifecycleState;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     // Add callback for notifiation selected
     notificationSelected = (() {
@@ -65,20 +69,32 @@ class SituationListPageState extends State<SituationListPage> {
     });
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appLifecycleState = state;
+    print('Changed app lifecycle state to $state');
+    super.didChangeAppLifecycleState(state);
+  }
+
   _getNerData(String query) async {
     var result;
     String safeQuery = Uri.encodeComponent(query);
-    // local testing URL
-    //var url = 'http://10.0.2.2:8080?q=' + safeQuery;
-    //var url = 'http://192.168.1.101:8080?q=' + safeQuery;
-    var url =
-        'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations?q=' +
-            safeQuery;
+    const remoteBaseUrl = 'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations';
+    const localBaseUrl = 'http://10.0.2.2:8080';
+    final url = (_useLocalServer ? localBaseUrl : remoteBaseUrl) + '?q=' + safeQuery;
+
     setState(() {
       _loading = true;
     });
 
     try {
+      print('searching query $safeQuery');
       var response = await http.get(url);
       if (response.statusCode == 200) {
         result = Situation.allFromJson(response.body);
@@ -86,6 +102,7 @@ class SituationListPageState extends State<SituationListPage> {
         // '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
         setState(() {
           //_nerData = result;
+          print('successfully loaded results from query $safeQuery');
           _situations = result;
         });
       } else {
@@ -111,11 +128,15 @@ class SituationListPageState extends State<SituationListPage> {
   }
 
   _backgroundTask(String taskId) async {
+    if (_appLifecycleState == AppLifecycleState.resumed || _appLifecycleState == null) {
+      print('Background task ran, but app was in foreground. Aborting.');
+      return;
+    }
     var prefs = await SharedPreferences.getInstance();
-    _nerQuery = prefs.getString(backgroundQueryKey) ?? '';
+    var bgNerQuery = prefs.getString(backgroundQueryKey) ?? '';
     //print('task ID $taskId');
-    print('Running background search with query "$_nerQuery".');
-    await _getNerData(_nerQuery);
+    print('Running background search with query "$bgNerQuery".');
+    await _getNerData(bgNerQuery);
     if (_situations.length > 0) {
       print('Found situations, sending notification...');
       var androidChannelSpecifics = AndroidNotificationDetails(
@@ -281,6 +302,19 @@ class SituationListPageState extends State<SituationListPage> {
                 ],
               ),
             ),
+            if (kDebugMode)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Use local server'),
+                  Switch(
+                    onChanged: (value) => setState(
+                      () => _useLocalServer = value,
+                    ),
+                    value: _useLocalServer,
+                  ),
+                ],
+              ),
             if (_situations.length == 0 && !_loading)
               Text((_nerQuery == '')
                   ? 'Type something in the box to get started!'
