@@ -58,7 +58,13 @@ def twitter_query(search_query, lang):
 
         # if it has a situation, add all situations and geographical locations
         if detectedSituation:
-            key_statuses.append(status)
+            customStatus = {'text': sentence, 
+            'status_id': status['id'],
+            'created_at': status['created_at'], 
+            'username': status['user']['screen_name'],
+            'verified': status['user']['verified']
+            }
+            key_statuses.append(customStatus)
             score += 1
             if status['user']['verified']:
                 score += 4
