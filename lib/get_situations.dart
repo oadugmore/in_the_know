@@ -25,7 +25,7 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
         (useLocalServer ? localBaseUrl : remoteBaseUrl) + '?q=' + safeQuery;
 
     try {
-      print('searching query $safeQuery');
+      print('Searching query "$safeQuery"');
       var response = await http.get(url);
       if (response.statusCode == 200) {
         result = Situation.allFromJson(response.body);
@@ -46,7 +46,6 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
     }
     var prefs = await SharedPreferences.getInstance();
     var bgNerQuery = prefs.getString(backgroundQueryKey) ?? '';
-    //print('task ID $taskId');
     print('Running background search with query "$bgNerQuery".');
     var situations = await getNerData(bgNerQuery, false);
     if (situations.length > 0) {
