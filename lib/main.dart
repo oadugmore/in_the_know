@@ -8,6 +8,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 //ValueNotifier notificationSelected = ValueNotifier(null);
 VoidCallback notificationSelected;
+final situationKey = 'situation';
 final backgroundQueryKey = 'backgroundQuery';
 final backgroundTaskEnabledKey = 'backgroundTaskEnabled';
 
@@ -31,7 +32,7 @@ initializeNotificationSettings() async {
 
 Future selectNotification(String payload) async {
   if (payload != null) {
-    print('notification payload: $payload');
+    print('Selected notification with payload: $payload');
   }
   // if (notificationSelected.value == payload) {
   //   print('Duplicate payload.');

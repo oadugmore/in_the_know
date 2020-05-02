@@ -1,12 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:in_the_know/detail.dart';
 import 'package:background_fetch/background_fetch.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:in_the_know/main.dart';
 import 'package:in_the_know/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'get_situations.dart' as get_situations;
 import 'situation.dart';
 
 class SituationListPage extends StatefulWidget {
@@ -18,7 +20,8 @@ class SituationListPage extends StatefulWidget {
   createState() => SituationListPageState();
 }
 
-class SituationListPageState extends State<SituationListPage> with WidgetsBindingObserver {
+class SituationListPageState extends State<SituationListPage>
+    with WidgetsBindingObserver {
   String _nerQuery = '';
   String _nerData = '';
   bool _loading = false;
@@ -31,15 +34,22 @@ class SituationListPageState extends State<SituationListPage> with WidgetsBindin
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    get_situations.appLifecycleState = AppLifecycleState.resumed;
 
+
+    // Configure background fetch when SharedPrefs is available
+    _prefs.then((final prefs) async {
     // Add callback for notifiation selected
     notificationSelected = (() {
-      if (_situations.isNotEmpty) {
+      print('NotificationSelected callback ran.');
+      var storedSituation = prefs.getString(situationKey);
+      if (storedSituation != null) {
+      final situationFromNotification = Situation.fromJson(jsonDecode(storedSituation));
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SituationDetailPage(
-              currentSituation: _situations.first,
+              currentSituation: situationFromNotification,
             ),
           ),
         );
@@ -49,8 +59,8 @@ class SituationListPageState extends State<SituationListPage> with WidgetsBindin
       }
     });
 
-    // Configure background fetch when SharedPrefs is available
-    _prefs.then((final prefs) async {
+      get_situations.notificationColor = Theme.of(context).primaryColor;
+      BackgroundFetch.registerHeadlessTask(get_situations.backgroundTask);
       var enableBackground = prefs.getBool(backgroundTaskEnabledKey) ?? false;
       await BackgroundFetch.configure(
               BackgroundFetchConfig(
@@ -59,7 +69,7 @@ class SituationListPageState extends State<SituationListPage> with WidgetsBindin
                 enableHeadless: true,
                 requiredNetworkType: NetworkType.ANY,
               ),
-              _backgroundTask)
+              get_situations.backgroundTask)
           .then((int status) => print('Configured background fetch.'))
           .catchError((e) => print('Error configuring background fetch: $e'));
 
@@ -78,89 +88,25 @@ class SituationListPageState extends State<SituationListPage> with WidgetsBindin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _appLifecycleState = state;
+    get_situations.appLifecycleState = state;
     print('Changed app lifecycle state to $state');
     super.didChangeAppLifecycleState(state);
   }
 
-  _getNerData(String query) async {
-    var result;
-    String safeQuery = Uri.encodeComponent(query);
-    const remoteBaseUrl = 'https://us-central1-in-the-know-82723.cloudfunctions.net/get_situations';
-    const localBaseUrl = 'http://10.0.2.2:8080';
-    final url = (_useLocalServer ? localBaseUrl : remoteBaseUrl) + '?q=' + safeQuery;
-
-    setState(() {
-      _loading = true;
-    });
-
-    try {
-      print('searching query $safeQuery');
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        result = Situation.allFromJson(response.body);
-        // result = Situation.allFromJson(jsonDecode(
-        // '{"situations": [{"type": "type1", "locations": [{"name": "loc1", "frequency": "0.85"}, {"name": "loc2", "frequency": "0.15"}]}, {"type": "type2", "locations": [{"name": "loc3", "frequency": "0.5"}, {"name": "loc4", "frequency": "0.5"}]}] }'));
-        setState(() {
-          //_nerData = result;
-          print('successfully loaded results from query $safeQuery');
-          _situations = result;
-        });
-      } else {
-        print(
-            'HTTP request returned status code ${response.statusCode.toString()}.');
-      }
-    } catch (exception) {
-      print('Error: ' + exception.toString());
-    }
-    setState(() {
-      _loading = false;
-    });
-  }
-
-  _submitQuery(String text) {
+  void _submitQuery(String text) async {
     if (text.trim().isEmpty) {
       setState(() {
         _situations.clear();
       });
       return;
     }
-    _getNerData(text);
-  }
-
-  _backgroundTask(String taskId) async {
-    if (_appLifecycleState == AppLifecycleState.resumed || _appLifecycleState == null) {
-      print('Background task ran, but app was in foreground. Aborting.');
-      return;
-    }
-    var prefs = await SharedPreferences.getInstance();
-    var bgNerQuery = prefs.getString(backgroundQueryKey) ?? '';
-    //print('task ID $taskId');
-    print('Running background search with query "$bgNerQuery".');
-    await _getNerData(bgNerQuery);
-    if (_situations.length > 0) {
-      print('Found situations, sending notification...');
-      var androidChannelSpecifics = AndroidNotificationDetails(
-        'situations',
-        'Situations',
-        null,
-        color: Theme.of(context).primaryColor,
-        importance: Importance.High,
-        priority: Priority.High,
-      );
-      var iOSChannelSpecifics = IOSNotificationDetails();
-      var notificationDetails =
-          NotificationDetails(androidChannelSpecifics, iOSChannelSpecifics);
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        _situations.first.type,
-        '${_situations.first.statuses.length} people Tweeting',
-        notificationDetails,
-        payload: 'sample payload',
-      );
-    } else {
-      print('Didn\'t find any situations.');
-    }
-    BackgroundFetch.finish(taskId);
+    setState(() {
+      _loading = true;
+    });
+    _situations = await get_situations.getNerData(text, _useLocalServer);
+    setState(() {
+      _loading = false;
+    });
   }
 
   Widget _enableNotificationsCard() {
