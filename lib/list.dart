@@ -266,12 +266,12 @@ class SituationListPageState extends State<SituationListPage> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      onSubmitted: _submitQuery,
+                      onChanged: (value) => _nerQuery = value,
                       decoration: InputDecoration(
                         hintText: 'Enter location or other search term',
                         // border: InputBorder.none,
                       ),
-                      onSubmitted: _submitQuery,
-                      onChanged: (value) => _nerQuery = value,
                     ),
                   ),
                   IconButton(
@@ -281,7 +281,7 @@ class SituationListPageState extends State<SituationListPage> {
                 ],
               ),
             ),
-            if (_situations.length == 0)
+            if (_situations.length == 0 && !_loading)
               Text((_nerQuery == '')
                   ? 'Type something in the box to get started!'
                   : 'No situations found.'),

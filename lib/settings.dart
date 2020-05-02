@@ -1,4 +1,5 @@
 import 'package:background_fetch/background_fetch.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,6 +18,7 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
   var _backgroundTaskEnabled = false;
   var _prefs = SharedPreferences.getInstance();
+  final _controller = TextEditingController();
   // bool _backgroundTaskConfigured = false;
 
   @override
@@ -33,6 +35,8 @@ class SettingsPageState extends State<SettingsPage> {
               prefs.getBool(backgroundTaskEnabledKey) ?? false;
         });
       }
+      var nerQuery = prefs.getString(backgroundQueryKey) ?? '';
+      _controller.text = nerQuery;
     });
   }
 
@@ -89,10 +93,11 @@ class SettingsPageState extends State<SettingsPage> {
               children: <Widget>[
                 Expanded(
                   child: TextField(
+                    onSubmitted: (value) => _setBackgroundTaskQuery(value),
+                    controller: _controller,
                     decoration: InputDecoration(
                       hintText: 'Background search',
                     ),
-                    onSubmitted: (value) => _setBackgroundTaskQuery(value),
                   ),
                 ),
                 Text('Enabled'),
@@ -103,7 +108,7 @@ class SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          RaisedButton(
+          if (!kReleaseMode) RaisedButton(
             onPressed: _scheduleBackgroundTask,
             child: Text('Run in 5 seconds'),
           )
