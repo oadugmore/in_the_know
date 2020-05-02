@@ -32,7 +32,8 @@ def twitter_query(search_query, lang):
     twitter_response = twitter.search.tweets(
         q=search_query, lang=lang, count=TWEET_COUNT)
 
-    result = ''
+    result = {'situations': []}
+    # result = ''
     score = 0
     situations = dict()
     locations = dict()
@@ -104,7 +105,8 @@ def twitter_query(search_query, lang):
             {'type': situationName, 'locations': locationsList, 'statuses': key_statuses})
 
         # Final JSON construction
-        result = {'situations': situationsList}
+        result['situations'] = situationsList
+        # result = {'situations': situationsList}
     else:
         print("This result did not meet the threshold to be included in the returned data.")
 
