@@ -36,31 +36,32 @@ class SituationListPageState extends State<SituationListPage>
     WidgetsBinding.instance.addObserver(this);
     get_situations.appLifecycleState = AppLifecycleState.resumed;
 
-
     // Configure background fetch when SharedPrefs is available
     _prefs.then((final prefs) async {
-    // Add callback for notifiation selected
-    notificationSelected = (() {
-      print('NotificationSelected callback ran.');
-      var storedSituation = prefs.getString(situationKey);
-      if (storedSituation != null) {
-      final situationFromNotification = Situation.fromJson(jsonDecode(storedSituation));
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SituationDetailPage(
-              currentSituation: situationFromNotification,
+      // Add callback for notifiation selected
+      notificationSelected = (() {
+        print('NotificationSelected callback ran.');
+        var storedSituation = prefs.getString(situationKey);
+        if (storedSituation != null) {
+          final situationFromNotification =
+              Situation.fromJson(jsonDecode(storedSituation));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SituationDetailPage(
+                currentSituation: situationFromNotification,
+              ),
             ),
-          ),
-        );
-      } else {
-        print(
-            'Error: No situations detected, even though a notification was clicked.');
-      }
-    });
+          );
+        } else {
+          print(
+              'Error: No situations detected, even though a notification was clicked.');
+        }
+      });
 
-      get_situations.notificationColor = Theme.of(context).primaryColor;
-      BackgroundFetch.registerHeadlessTask(get_situations.backgroundTask);
+      final currentColor = Theme.of(context).primaryColor;
+      get_situations.notificationColor = currentColor;
+      prefs.setInt(notificationColorKey, currentColor.value);
       var enableBackground = prefs.getBool(backgroundTaskEnabledKey) ?? false;
       await BackgroundFetch.configure(
               BackgroundFetchConfig(
@@ -235,6 +236,7 @@ class SituationListPageState extends State<SituationListPage>
                     child: TextField(
                       onSubmitted: _submitQuery,
                       onChanged: (value) => _nerQuery = value,
+                      textInputAction: TextInputAction.search,
                       decoration: InputDecoration(
                         hintText: 'Enter location or other search term',
                         // border: InputBorder.none,

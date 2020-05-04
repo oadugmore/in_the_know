@@ -10,7 +10,7 @@ import 'main.dart';
 import 'situation.dart';
 import 'package:http/http.dart' as http;
 
-var notificationColor = Colors.white;
+var notificationColor;
 // var situations = List<Situation>();
 AppLifecycleState appLifecycleState;
 
@@ -51,6 +51,8 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
     if (situations.length > 0) {
       print('Found situations, saving to SharedPreferences and sending notification...');
       prefs.setString(situationKey, jsonEncode(situations.first));
+      var colorValue = prefs.getInt(notificationColorKey) ?? Colors.white.value;
+      notificationColor = Color(colorValue);
       var androidChannelSpecifics = AndroidNotificationDetails(
         'situations',
         'Situations',

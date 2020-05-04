@@ -11,6 +11,7 @@ VoidCallback notificationSelected;
 final situationKey = 'situation';
 final backgroundQueryKey = 'backgroundQuery';
 final backgroundTaskEnabledKey = 'backgroundTaskEnabled';
+final notificationColorKey = 'notificationColor';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

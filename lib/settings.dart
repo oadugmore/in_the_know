@@ -2,6 +2,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'main.dart';
@@ -18,8 +19,9 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
   var _backgroundTaskEnabled = false;
   var _prefs = SharedPreferences.getInstance();
+  var _packageInfo = PackageInfo.fromPlatform();
+  var _packageVersion = '';
   final _controller = TextEditingController();
-  // bool _backgroundTaskConfigured = false;
 
   @override
   void initState() {
@@ -28,6 +30,11 @@ class SettingsPageState extends State<SettingsPage> {
       _setBackgroundTaskQuery(widget.queryForBackgroundTask);
       _toggleBackgroundTaskEnabled(true);
     }
+    _packageInfo.then((final packageInfo) {
+      setState(() {
+        _packageVersion = packageInfo.version;
+      });
+    });
     _prefs.then((final prefs) {
       if (widget.queryForBackgroundTask == null) {
         setState(() {
@@ -39,13 +46,6 @@ class SettingsPageState extends State<SettingsPage> {
       _controller.text = nerQuery;
     });
   }
-
-  // _initAsync() async {
-  //   final prefs = await _prefs;
-  //   setState(() {
-  //     _backgroundTaskEnabled = prefs.getBool(backgroundTaskEnabledKey) ?? false;
-  //   });
-  // }
 
   _setBackgroundTaskQuery(String query) async {
     var prefs = await _prefs;
@@ -62,7 +62,6 @@ class SettingsPageState extends State<SettingsPage> {
     prefs.setBool(backgroundTaskEnabledKey, _backgroundTaskEnabled);
     if (_backgroundTaskEnabled) {
       BackgroundFetch.start();
-      // _scheduleBackgroundTask();
     } else {
       BackgroundFetch.stop();
     }
@@ -85,33 +84,47 @@ class SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text('Settings'),
       ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    onSubmitted: (value) => _setBackgroundTaskQuery(value),
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Background search',
-                    ),
-                  ),
-                ),
-                Text('Enabled'),
-                Switch(
-                  value: _backgroundTaskEnabled,
-                  onChanged: _toggleBackgroundTaskEnabled,
-                ),
-              ],
+      body: ListView(
+        children: [
+          ListTile(
+            title: Text(
+              'Notifications',
+              style: Theme.of(context).textTheme.headline6,
             ),
           ),
-          if (kDebugMode) RaisedButton(
-            onPressed: _scheduleBackgroundTask,
-            child: Text('Run in 5 seconds'),
-          )
+          SwitchListTile(
+            title: Text('Enable notifications'),
+            onChanged: _toggleBackgroundTaskEnabled,
+            value: _backgroundTaskEnabled,
+          ),
+          ListTile(
+            title: TextField(
+              enabled: _backgroundTaskEnabled,
+              onSubmitted: (value) => _setBackgroundTaskQuery(value),
+              controller: _controller,
+              decoration: InputDecoration(
+                labelText: 'Search term',
+                hintText: 'Enter a search term to get notifications for',
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text(
+              'About',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ),
+          AboutListTile(
+            applicationVersion: 'Version $_packageVersion',
+            applicationLegalese: '© 2020 Owen Dugmore',
+          ),
+          if (kDebugMode)
+            ListTile(
+              title: RaisedButton(
+                onPressed: _scheduleBackgroundTask,
+                child: Text('Run in 5 seconds'),
+              ),
+            ),
         ],
       ),
     );
