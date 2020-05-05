@@ -11,8 +11,6 @@ import 'situation.dart';
 import 'package:http/http.dart' as http;
 
 var notificationColor;
-// var situations = List<Situation>();
-AppLifecycleState appLifecycleState;
 
 Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
     var result;
@@ -40,10 +38,6 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
   }
 
   void backgroundTask(String taskId) async {
-    if (appLifecycleState == AppLifecycleState.resumed) {
-      print('Background task ran, but app was in foreground. Aborting.');
-      return;
-    }
     var prefs = await SharedPreferences.getInstance();
     var bgNerQuery = prefs.getString(backgroundQueryKey) ?? '';
     print('Running background search with query "$bgNerQuery".');

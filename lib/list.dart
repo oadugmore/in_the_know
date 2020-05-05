@@ -20,8 +20,7 @@ class SituationListPage extends StatefulWidget {
   createState() => SituationListPageState();
 }
 
-class SituationListPageState extends State<SituationListPage>
-    with WidgetsBindingObserver {
+class SituationListPageState extends State<SituationListPage> {
   String _nerQuery = '';
   String _nerData = '';
   bool _loading = false;
@@ -32,8 +31,6 @@ class SituationListPageState extends State<SituationListPage>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    get_situations.appLifecycleState = AppLifecycleState.resumed;
     initializeNotificationSettings();
 
     // Configure background fetch when SharedPrefs is available
@@ -94,19 +91,6 @@ class SituationListPageState extends State<SituationListPage>
       print(
           'Error: No situations detected, even though a notification was clicked.');
     }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    get_situations.appLifecycleState = state;
-    print('Changed app lifecycle state to $state');
-    super.didChangeAppLifecycleState(state);
   }
 
   void _submitQuery(String text) async {
