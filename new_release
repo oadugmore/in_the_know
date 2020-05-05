@@ -7,13 +7,21 @@ shopt -s expand_aliases
 # Increment version
 version=`grep version: ./pubspec.yaml | cut -d ' ' -f 2`
 version_num=`echo "$version" | cut -d '+' -f 2`
+version_name=`echo "$version" | cut -d '+' -f 1`
+
 if [ "$1" == "-n" ]; then
-    version_name="$2"
-else
-    version_name=`echo "$version" | cut -d '+' -f 1`
+    if [ "$2" == "" ]; then
+        build=`echo $version_name | cut -d '.' -f 3`
+        ((build += 1))
+        majmin=`echo "$version_name" | cut -d '.' -f 1-2`
+        version_name="$majmin.$build"
+    else
+        version_name="$2"
+    fi
 fi
-new_num=$((version_num+1))
-sed -i -e '/version:/ s/:.*/: '"${version_name}+${new_num}"'/' ./pubspec.yaml
+
+((version_num += 1))
+sed -i -e '/version:/ s/:.*/: '"${version_name}+${version_num}"'/' ./pubspec.yaml
 
 # Build app bundle
 flutter build appbundle
