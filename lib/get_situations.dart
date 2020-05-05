@@ -54,6 +54,7 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
         color: notificationColor,
         importance: Importance.High,
         priority: Priority.High,
+        icon: 'ic_stat_name',
       );
       var iOSChannelSpecifics = IOSNotificationDetails();
       var notificationDetails =
