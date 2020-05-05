@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Enable aliases (required for flutter function)
+shopt -s expand_aliases
+. ~/.bash_aliases
+
+# Increment version
+version=`grep version: ./pubspec.yaml | cut -d ' ' -f 2`
+version_num=`echo "$version" | cut -d '+' -f 2`
+if [ "$1" == "-n" ]; then
+    version_name="$2"
+else
+    version_name=`echo "$version" | cut -d '+' -f 1`
+fi
+new_num=$((version_num+1))
+sed -i -e '/version:/ s/:.*/: '"${version_name}+${new_num}"'/' ./pubspec.yaml
+
+# Build app bundle
+flutter build appbundle
