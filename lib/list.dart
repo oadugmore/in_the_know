@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_the_know/detail.dart';
 import 'package:background_fetch/background_fetch.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:in_the_know/main.dart';
 import 'package:in_the_know/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,37 +28,16 @@ class SituationListPageState extends State<SituationListPage>
   var _situations = new List<Situation>();
   var _prefs = SharedPreferences.getInstance();
   bool _useLocalServer = false;
-  AppLifecycleState _appLifecycleState;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     get_situations.appLifecycleState = AppLifecycleState.resumed;
+    initializeNotificationSettings();
 
     // Configure background fetch when SharedPrefs is available
     _prefs.then((final prefs) async {
-      // Add callback for notifiation selected
-      notificationSelected = (() {
-        print('NotificationSelected callback ran.');
-        var storedSituation = prefs.getString(situationKey);
-        if (storedSituation != null) {
-          final situationFromNotification =
-              Situation.fromJson(jsonDecode(storedSituation));
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SituationDetailPage(
-                currentSituation: situationFromNotification,
-              ),
-            ),
-          );
-        } else {
-          print(
-              'Error: No situations detected, even though a notification was clicked.');
-        }
-      });
-
       final currentColor = Theme.of(context).primaryColor;
       get_situations.notificationColor = currentColor;
       prefs.setInt(notificationColorKey, currentColor.value);
@@ -68,16 +47,53 @@ class SituationListPageState extends State<SituationListPage>
                 minimumFetchInterval: 15,
                 stopOnTerminate: false,
                 enableHeadless: true,
+                startOnBoot: true,
+                requiresBatteryNotLow: true,
                 requiredNetworkType: NetworkType.ANY,
               ),
               get_situations.backgroundTask)
           .then((int status) => print('Configured background fetch.'))
           .catchError((e) => print('Error configuring background fetch: $e'));
+      await BackgroundFetch.registerHeadlessTask(get_situations.backgroundTask);
 
       if (!enableBackground) {
         await BackgroundFetch.stop();
       }
     });
+  }
+
+  void initializeNotificationSettings() async {
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('ic_stat_name');
+    var initializationSettingsIOS;
+    var initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: selectNotification);
+  }
+
+  Future selectNotification(String payload) async {
+    // if (payload != null) {
+    //   print('Selected notification with payload: $payload');
+    // }
+    final prefs = await _prefs;
+    print('Retrieving situation from notification.');
+    var storedSituation = prefs.getString(situationKey);
+    if (storedSituation != null) {
+      final situationFromNotification =
+          Situation.fromJson(jsonDecode(storedSituation));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SituationDetailPage(
+            currentSituation: situationFromNotification,
+          ),
+        ),
+      );
+    } else {
+      print(
+          'Error: No situations detected, even though a notification was clicked.');
+    }
   }
 
   @override
@@ -88,7 +104,6 @@ class SituationListPageState extends State<SituationListPage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _appLifecycleState = state;
     get_situations.appLifecycleState = state;
     print('Changed app lifecycle state to $state');
     super.didChangeAppLifecycleState(state);

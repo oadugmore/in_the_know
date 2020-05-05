@@ -26,7 +26,7 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
 
     try {
       print('Searching query "$safeQuery"');
-      var response = await http.get(url);
+      final response = await http.get(url);
       if (response.statusCode == 200) {
         result = Situation.allFromJson(response.body);
       } else {
@@ -50,7 +50,7 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
     var situations = await getNerData(bgNerQuery, false);
     if (situations.length > 0) {
       print('Found situations, saving to SharedPreferences and sending notification...');
-      prefs.setString(situationKey, jsonEncode(situations.first));
+      await prefs.setString(situationKey, jsonEncode(situations.first));
       var colorValue = prefs.getInt(notificationColorKey) ?? Colors.white.value;
       notificationColor = Color(colorValue);
       var androidChannelSpecifics = AndroidNotificationDetails(

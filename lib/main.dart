@@ -1,45 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'list.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-NotificationAppLaunchDetails notificationAppLaunchDetails;
-//ValueNotifier notificationSelected = ValueNotifier(null);
-VoidCallback notificationSelected;
 final situationKey = 'situation';
 final backgroundQueryKey = 'backgroundQuery';
 final backgroundTaskEnabledKey = 'backgroundTaskEnabled';
 final notificationColorKey = 'notificationColor';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  initializeNotificationSettings();
   runApp(MyApp());
-}
-
-initializeNotificationSettings() async {
-  notificationAppLaunchDetails =
-      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  var initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_stat_name');
-  var initializationSettingsIOS;
-  var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: selectNotification);
-}
-
-Future selectNotification(String payload) async {
-  if (payload != null) {
-    print('Selected notification with payload: $payload');
-  }
-  // if (notificationSelected.value == payload) {
-  //   print('Duplicate payload.');
-  //   payload = '';
-  // }
-  notificationSelected();
 }
 
 class MyApp extends StatelessWidget {
