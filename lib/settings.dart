@@ -69,7 +69,7 @@ class SettingsPageState extends State<SettingsPage> {
 
   _scheduleBackgroundTask() async {
     await BackgroundFetch.scheduleTask(TaskConfig(
-      taskId: 'com.oadugmore.customtask',
+      taskId: 'com.transistorsoft.customtask',
       delay: 5000,
       periodic: false,
       enableHeadless: true,

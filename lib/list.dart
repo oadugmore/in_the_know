@@ -62,7 +62,7 @@ class SituationListPageState extends State<SituationListPage> {
   void initializeNotificationSettings() async {
     var initializationSettingsAndroid =
         AndroidInitializationSettings('ic_stat_name');
-    var initializationSettingsIOS;
+    var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
