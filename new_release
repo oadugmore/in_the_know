@@ -25,3 +25,6 @@ sed -i -e '/version:/ s/:.*/: '"${version_name}+${version_num}"'/' ./pubspec.yam
 
 # Build app bundle
 flutter build appbundle
+
+# Open output folder
+explorer.exe .\\build\\app\\outputs\\bundle\\release
