@@ -22,7 +22,6 @@ class SituationListPage extends StatefulWidget {
 
 class SituationListPageState extends State<SituationListPage> {
   String _nerQuery = '';
-  String _nerData = '';
   bool _loading = false;
   var _situations = new List<Situation>();
   var _prefs = SharedPreferences.getInstance();
@@ -94,6 +93,7 @@ class SituationListPageState extends State<SituationListPage> {
   }
 
   void _submitQuery(String text) async {
+    _nerQuery = text;
     if (text.trim().isEmpty) {
       setState(() {
         _situations.clear();
@@ -184,9 +184,9 @@ class SituationListPageState extends State<SituationListPage> {
     );
   }
 
-  _selectOverflowMenuChoice(OverflowMenuChoice choice) {
-    switch (choice.title) {
-      case 'Settings':
+  _clickAppBarAction(String action) {
+    switch (action) {
+      case AppBarActions.settings:
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -195,40 +195,39 @@ class SituationListPageState extends State<SituationListPage> {
         );
         break;
       default:
+        print('Error: $action has not been added as an AppBarAction.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(  
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          PopupMenuButton<OverflowMenuChoice>(
-            onSelected: _selectOverflowMenuChoice,
-            itemBuilder: (context) {
-              return choices.map((OverflowMenuChoice choice) {
-                return PopupMenuItem<OverflowMenuChoice>(
-                  child: Text(choice.title),
-                  value: choice,
-                );
-              }).toList();
-            },
-          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            tooltip: AppBarActions.settings,
+            onPressed: () => _clickAppBarAction(AppBarActions.settings),
+          )
+          // PopupMenuButton<String>(
+          //   onSelected: _selectOverflowMenuChoice,
+          //   itemBuilder: (context) {
+          //     return OverflowMenuChoices.choices.map((String choice) {
+          //       return PopupMenuItem<String>(
+          //         child: Text(choice),
+          //         value: choice,
+          //       );
+          //     }).toList();
+          //   },
+          // ),
         ],
       ),
       body: Center(
         child: Column(
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.all(8),
-              // decoration: BoxDecoration(
-              //   border: Border(
-              //     bottom: BorderSide(
-              //       width: 0,
-              //     ),
-              //   ),
-              // ),
+              margin: const EdgeInsets.only(left: 8, top: 8),
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -238,13 +237,13 @@ class SituationListPageState extends State<SituationListPage> {
                       textInputAction: TextInputAction.search,
                       decoration: InputDecoration(
                         hintText: 'Enter location or other search term',
-                        // border: InputBorder.none,
                       ),
                     ),
                   ),
                   IconButton(
-                    onPressed: () => _submitQuery(_nerQuery),
                     icon: Icon(Icons.search),
+                    tooltip: 'Search',
+                    onPressed: () => _submitQuery(_nerQuery),
                   ),
                 ],
               ),
@@ -274,12 +273,10 @@ class SituationListPageState extends State<SituationListPage> {
   }
 }
 
-class OverflowMenuChoice {
-  const OverflowMenuChoice({this.title});
+class AppBarActions {
+  static const String settings = 'Settings';
 
-  final String title;
+  static const List<String> all = <String>[
+    settings,
+  ];
 }
-
-const List<OverflowMenuChoice> choices = const <OverflowMenuChoice>[
-  const OverflowMenuChoice(title: 'Settings'),
-];
