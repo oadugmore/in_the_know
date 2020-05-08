@@ -10,8 +10,6 @@ import 'main.dart';
 import 'situation.dart';
 import 'package:http/http.dart' as http;
 
-var notificationColor;
-
 Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
     var result;
     // var situations = List<Situation>();
@@ -45,8 +43,6 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
     if (situations.length > 0) {
       print('Found situations, saving to SharedPreferences and sending notification...');
       await prefs.setString(situationKey, jsonEncode(situations.first));
-      var colorValue = prefs.getInt(notificationColorKey) ?? Colors.white.value;
-      notificationColor = Color(colorValue);
       var androidChannelSpecifics = AndroidNotificationDetails(
         'situations',
         'Situations',
@@ -54,7 +50,6 @@ Future<List<Situation>> getNerData(String query, bool useLocalServer) async {
         color: notificationColor,
         importance: Importance.High,
         priority: Priority.High,
-        icon: 'ic_stat_name',
       );
       var iOSChannelSpecifics = IOSNotificationDetails();
       var notificationDetails =

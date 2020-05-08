@@ -34,9 +34,6 @@ class SituationListPageState extends State<SituationListPage> {
 
     // Configure background fetch when SharedPrefs is available
     _prefs.then((final prefs) async {
-      final currentColor = Theme.of(context).primaryColor;
-      get_situations.notificationColor = currentColor;
-      prefs.setInt(notificationColorKey, currentColor.value);
       var enableBackground = prefs.getBool(backgroundTaskEnabledKey) ?? false;
       await BackgroundFetch.configure(
               BackgroundFetchConfig(
@@ -60,7 +57,7 @@ class SituationListPageState extends State<SituationListPage> {
 
   void initializeNotificationSettings() async {
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('ic_stat_name');
+        AndroidInitializationSettings('@drawable/ic_stat_name');
     var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -227,7 +224,7 @@ class SituationListPageState extends State<SituationListPage> {
         child: Column(
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.only(left: 8, top: 8),
+              margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
               child: Row(
                 children: <Widget>[
                   Expanded(

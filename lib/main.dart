@@ -8,6 +8,7 @@ final situationKey = 'situation';
 final backgroundQueryKey = 'backgroundQuery';
 final backgroundTaskEnabledKey = 'backgroundTaskEnabled';
 final notificationColorKey = 'notificationColor';
+final notificationColor = Colors.amber;
 
 void main() {
   runApp(MyApp());
