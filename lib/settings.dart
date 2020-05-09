@@ -1,4 +1,5 @@
 import 'package:background_fetch/background_fetch.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -68,19 +69,34 @@ class SettingsPageState extends State<SettingsPage> {
     print('Saved "$query" as background query.');
   }
 
-  _toggleBackgroundTaskEnabled(bool enabled) async {
+  _toggleBackgroundTaskEnabled(bool tryEnabled) async {
+    bool enabled;
+    if (tryEnabled) {
+      enabled = await checkNotificationPermissions();
+      if (!enabled) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: Text('Missing notification permission'),
+            content: Text(
+                'Please go to Settings and enable notifications for In The Know.'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+          ),
+        );
+      }
+    } else {
+      enabled = false;
+    }
+
     setState(() {
       _backgroundTaskEnabled = enabled;
     });
-
-    if (_backgroundTaskEnabled) {
-      final permissionStatus = await checkNotificationPermissions();
-      if (!permissionStatus) {
-        setState(() {
-          _backgroundTaskEnabled = false;
-        });
-      }
-    }
 
     final prefs = await _prefs;
     prefs.setBool(backgroundTaskEnabledKey, _backgroundTaskEnabled);

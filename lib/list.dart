@@ -115,8 +115,8 @@ class SituationListPageState extends State<SituationListPage> {
       color: Theme.of(context).primaryColor,
       child: ListTile(
         title: Text('Get notifications for this query'),
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => SettingsPage(
