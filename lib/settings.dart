@@ -1,11 +1,26 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'main.dart';
+
+Future<bool> checkNotificationPermissions() async {
+  final status = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+      true;
+  // If not on iOS, set status to 'true'
+  return status;
+}
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({Key key, this.queryForBackgroundTask}) : super(key: key);
@@ -57,6 +72,15 @@ class SettingsPageState extends State<SettingsPage> {
     setState(() {
       _backgroundTaskEnabled = enabled;
     });
+
+    if (_backgroundTaskEnabled) {
+      final permissionStatus = await checkNotificationPermissions();
+      if (!permissionStatus) {
+        setState(() {
+          _backgroundTaskEnabled = false;
+        });
+      }
+    }
 
     final prefs = await _prefs;
     prefs.setBool(backgroundTaskEnabledKey, _backgroundTaskEnabled);
