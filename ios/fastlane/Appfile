@@ -1,0 +1,8 @@
+app_identifier("com.oadugmore.intheknow") # The bundle identifier of your app
+apple_id("oadugmore@outlook.com") # Your Apple email address
+
+itc_team_id("118346292") # App Store Connect Team ID
+team_id("24P3DJ5Z4A") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
