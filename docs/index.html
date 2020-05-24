@@ -38,9 +38,9 @@
     <link href="style.css" rel="stylesheet">
 </head>
 
-<body>
+<body data-spy="scroll" data-target=".navbar" data-offset="80">
     <nav class="navbar navbar-expand-md navbar-dark bg-warning fixed-top">
-        <a class="navbar-brand" href="https://oadugmore.com">oadugmore</a>
+        <a class="navbar-brand" href="#">In The Know</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
             aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -48,12 +48,19 @@
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="https://oadugmore.com">Projects<span class="sr-only">(current)</span></a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About<span class="sr-only">(current)</span></a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#download">Download</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#privacy">Privacy</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/oadugmore/in_the_know"><img
+                            src="res/GitHub-Mark-Light-32px.png" /></a>
+                </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                 </li> -->
@@ -76,7 +83,7 @@
 
 
     <main role="main" class="container">
-        <div class="row align-items-center">
+        <div id="about" class="row align-items-center">
             <div class="col-md text-center">
                 <h2 style="font-size: 300%;">Stay in the know about local situations</h2>
                 <p style="font-size: 200%;">In The Know uses the power of Twitter and natural language processing to
@@ -84,28 +91,47 @@
                     locally relevant, potentially dangerous or disruptive situations.</p>
             </div>
             <div class="col-md">
-                <img src="list_screenshot.png" class="img-fluid rounded" style="max-height: 80%;">
+                <img src="res/list_screenshot.png" class="img-fluid rounded" style="max-height: 60%;">
             </div>
         </div>
 
         <div class="row align-items-center mt-5">
             <div class="col-md order-10">
-                <img src="detail_screenshot.png" class="img-fluid rounded" style="max-height: 80%;">
+                <img src="res/detail_screenshot.png" class="img-fluid rounded" style="max-height: 60%;">
             </div>
             <div class="col-md text-center">
                 <h2 style="font-size: 300%;">See what people are saying</h2>
                 <p style="font-size: 200%;">Instantly get access to relevant Tweets so you get the full story.</p>
             </div>
         </div>
-        <!-- <h1>About</h1> -->
-        <h1 class="mt-5">In The Know</h1>
-        <hr>
-        <p class="lead">A project by Owen Dugmore<br>
-            CS 4990 - Mobile App Development<br>
-            Cal Poly Pomona<br>Spring 2020</p>
-        <p>Check out the project on <a href="https://github.com/oadugmore/in_the_know">GitHub</a></p>
-        <h2 id="privacy">Privacy</h2>
-        <hr>
+
+        <div id="download" class="row mt-5 text-center align-items-center">
+            <div class="col-md">
+                <h3>Download for Android</h3>
+            </div>
+            <div class="col-md">
+                <a
+                    href='https://play.google.com/store/apps/details?id=com.oadugmore.intheknow&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                    <img src='res/google-play-badge.png' alt='Get it on Google Play' height="100" /></a>
+            </div>
+
+        </div>
+
+        <div class="row mt-3 text-center align-items-center">
+            <div class="col-md">
+                <h3>Download for iPhone (Open Beta)</h3>
+            </div>
+            <div class="col-md">
+                <a href="https://testflight.apple.com/join/CncCEaWq">
+                    <img src="res/app-store-badge.svg" alt="Download on the App Store" height="100"
+                        style="padding: 3%;"></a>
+            </div>
+        </div>
+
+        <div id="privacy">
+            <h2 class="mt-5">Privacy</h2>
+        </div>
+        <!-- <hr> -->
         <p>We, the developers of In The Know (“the app”), do not store or sell user data. When you use the app
             to search your location or some other query, this query is processed, and the results are displayed
             in the app. The app does not save the query or results. The query is passed through the
