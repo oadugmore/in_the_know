@@ -38,8 +38,8 @@
     <link href="style.css" rel="stylesheet">
 </head>
 
-<body data-spy="scroll" data-target=".navbar" data-offset="80">
-    <nav class="navbar navbar-expand-md navbar-dark bg-warning fixed-top">
+<body id="about" data-spy="scroll" data-target=".navbar">
+    <nav class="navbar navbar-expand-md navbar-light bg-warning fixed-top">
         <a class="navbar-brand" href="#">In The Know</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
             aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav mr-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" href="#about">About</a>
                 </li>
@@ -59,11 +59,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://github.com/oadugmore/in_the_know"><img
-                            src="res/GitHub-Mark-Light-32px.png" /></a>
+                            src="res/GitHub-Mark-32px.png" /></a>
                 </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li> -->
                 <!-- <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">Dropdown</a>
@@ -74,16 +71,11 @@
                     </div>
                 </li> -->
             </ul>
-            <!-- <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form> -->
         </div>
     </nav>
 
-
     <main role="main" class="container">
-        <div id="about" class="text-center">
+        <div class="text-center">
             <div class="row align-items-center">
                 <div class="col-md">
                     <h2 style="font-size: 300%;">Stay in the know about local situations</h2>
@@ -97,47 +89,50 @@
             </div>
 
             <div class="row align-items-center mt-5">
-                <div class="col-md order-10">
+                <div class="col-md order-5">
                     <img src="res/detail_screenshot.png" class="img-fluid rounded" style="max-height: 800px;">
                 </div>
-                <div class="col-md">
+                <div class="col-md order-md-10">
                     <h2 style="font-size: 300%;">See what people are saying</h2>
                     <p style="font-size: 200%;">Instantly get access to relevant Tweets so you get the full story.</p>
                 </div>
             </div>
         </div>
 
-        <div id="download" class="row text-center align-items-center mt-5">
-            <div class="col-md">
-                <h3>Download for Android</h3>
-            </div>
-            <div class="col-md">
-                <a
-                    href='https://play.google.com/store/apps/details?id=com.oadugmore.intheknow&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                    <img src='res/google-play-badge.png' alt='Get it on Google Play' height="100" /></a>
+        <div id="download" class="text-center pt-5 mx-auto">
+            <div class="row align-items-center">
+                <div class="col-md">
+                    <h3>Download for Android</h3>
+                </div>
+                <div class="col-md">
+                    <a
+                        href='https://play.google.com/store/apps/details?id=com.oadugmore.intheknow&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                        <img src='res/google-play-badge.png' alt='Get it on Google Play' height="100" /></a>
+                </div>
             </div>
 
+            <div class="row mt-3 align-items-center">
+                <div class="col-md">
+                    <h3>Download for iPhone (Open Beta)</h3>
+                </div>
+                <div class="col-md">
+                    <a href="https://testflight.apple.com/join/CncCEaWq">
+                        <img src="res/app-store-badge.svg" alt="Download on the App Store" height="100"
+                            style="padding: 3%;"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="row mt-3 text-center align-items-center">
-            <div class="col-md">
-                <h3>Download for iPhone (Open Beta)</h3>
-            </div>
-            <div class="col-md">
-                <a href="https://testflight.apple.com/join/CncCEaWq">
-                    <img src="res/app-store-badge.svg" alt="Download on the App Store" height="100"
-                        style="padding: 3%;"></a>
+        <div id="privacy" class="row mx-auto">
+            <div class="col">
+                <h2 class="mt-5">Privacy</h2>
+                <p>We, the developers of In The Know (“the app”), do not store or sell user data.
+                    When you use the app
+                    to search your location or some other query, this query is processed, and the results are displayed
+                    in the app. The app does not save the query or results. The query is passed through the
+                    Twitter API and is subject to Twitter’s privacy policy.</p>
             </div>
         </div>
-
-        <div id="privacy">
-            <h2 class="mt-5">Privacy</h2>
-        </div>
-        <!-- <hr> -->
-        <p>We, the developers of In The Know (“the app”), do not store or sell user data. When you use the app
-            to search your location or some other query, this query is processed, and the results are displayed
-            in the app. The app does not save the query or results. The query is passed through the
-            Twitter API and is subject to Twitter’s privacy policy.</p>
     </main>
 
     <!-- Optional JavaScript -->
