@@ -22,24 +22,27 @@ def get_situations(request):
     if request_args and 'q' in request_args:
         query = request_args['q']
     else:
-        query = "Elko"
+        query = ""
 
-    search_result = twitter_query(query, 'en')
-    return json.dumps(search_result)
+    twitter_response = twitter_query(query, 'en')
+    result = parse_twitter_response(twitter_response)
+    return json.dumps(result)
 
 
 def twitter_query(search_query, lang):
     twitter_response = twitter.search.tweets(
         q=search_query, lang=lang, count=TWEET_COUNT)
+    return twitter_response
 
+
+def parse_twitter_response(response):
     result = {'situations': []}
-    # result = ''
     score = 0
     situations = dict()
     locations = dict()
     locCount = 0
     key_statuses = []
-    for status in twitter_response['statuses']:
+    for status in response['statuses']:
         sentence = status['text']
         #result += "Raw tweet text: " + sentence + " "
         detectedSituation = False
@@ -58,12 +61,12 @@ def twitter_query(search_query, lang):
 
         # if it has a situation, add all situations and geographical locations
         if detectedSituation:
-            customStatus = {'text': sentence, 
-            'status_id': status['id'],
-            'created_at': status['created_at'], 
-            'username': status['user']['screen_name'],
-            'verified': status['user']['verified']
-            }
+            customStatus = {'text': sentence,
+                            'status_id': status['id'],
+                            'created_at': status['created_at'],
+                            'username': status['user']['screen_name'],
+                            'verified': status['user']['verified']
+                            }
             key_statuses.append(customStatus)
             score += 1
             if status['user']['verified']:
@@ -76,7 +79,8 @@ def twitter_query(search_query, lang):
                     #result += ", "
                 elif ent.label_ == "GPE":
                     locCount += 1
-                    ent_text_lower = str.lower(ent.text)
+                    # ent_text_lower = str.lower(ent.text)
+                    ent_text_lower = str.title(ent.text)
                     #print("Entity text: " + str.lower(ent.text))
                     locations[ent_text_lower] = locations.get(
                         ent_text_lower, 0) + 1
@@ -157,18 +161,21 @@ def train():
 
 
 if __name__ == "__main__":
-    # searchText = "sampletext"
-    # with open('search.txt', 'r') as searchFile:
-    #     searchText = searchFile.read()
+    searchText = "sampletext"
+    with open('search.txt', 'r') as searchFile:
+        searchText = searchFile.read()
 
-    # searchRequest = {  # Sample search request
-    #     "statuses": [
-    #         {
-    #             "text": searchText,
-    #             "user": {"verified": True}
-    #         }
-    #     ]
-    # }
+    searchRequest = {  # Sample search request
+        "statuses": [
+            {
+                "text": searchText,
+                "user": {"verified": True, "screen_name": "myScreenName"},
+                "id": "myID",
+                "created_at": "now"
+            }
+        ]
+    }
 
-    twitter_query('police activity', 'en')
-    #train()
+    result = parse_twitter_response(searchRequest)
+    print(result)
+    # train()
