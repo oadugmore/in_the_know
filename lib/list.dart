@@ -58,7 +58,11 @@ class SituationListPageState extends State<SituationListPage> {
   void initializeNotificationSettings() async {
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@drawable/ic_stat_name');
-    var initializationSettingsIOS = IOSInitializationSettings();
+    var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -111,8 +115,8 @@ class SituationListPageState extends State<SituationListPage> {
       color: Theme.of(context).primaryColor,
       child: ListTile(
         title: Text('Get notifications for this query'),
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => SettingsPage(
@@ -198,7 +202,7 @@ class SituationListPageState extends State<SituationListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(  
+    return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[

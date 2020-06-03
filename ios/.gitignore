@@ -3,6 +3,8 @@
 *.moved-aside
 *.pbxuser
 *.perspectivev3
+*.ipa
+*.dSYM.zip
 **/*sync/
 .sconsign.dblite
 .tags*

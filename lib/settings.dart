@@ -1,11 +1,27 @@
 import 'package:background_fetch/background_fetch.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'main.dart';
+
+Future<bool> checkNotificationPermissions() async {
+  final status = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+      true;
+  // If not on iOS, set status to 'true'
+  return status;
+}
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({Key key, this.queryForBackgroundTask}) : super(key: key);
@@ -53,7 +69,31 @@ class SettingsPageState extends State<SettingsPage> {
     print('Saved "$query" as background query.');
   }
 
-  _toggleBackgroundTaskEnabled(bool enabled) async {
+  _toggleBackgroundTaskEnabled(bool tryEnabled) async {
+    bool enabled;
+    if (tryEnabled) {
+      enabled = await checkNotificationPermissions();
+      if (!enabled) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: Text('Missing notification permission'),
+            content: Text(
+                'Please go to Settings and enable notifications for In The Know.'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+          ),
+        );
+      }
+    } else {
+      enabled = false;
+    }
+
     setState(() {
       _backgroundTaskEnabled = enabled;
     });
